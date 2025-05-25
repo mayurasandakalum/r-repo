@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Learning Apps Hub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .app-link {
+            display: inline-block;
+            margin: 10px;
+            padding: 15px 25px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .app-link:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Learning Apps Hub</h1>
+        <p>Welcome to the central hub for educational applications.</p>
+        
+        <h2>Available Applications</h2>
+        <div>
+            <a class="app-link" href="{{ kinesthetic_url }}">Kinesthetic Learning App</a>
+            <a class="app-link" href="{{ readwrite_url }}">Read/Write Learning App</a>
+            <a class="app-link" href="{{ visual_url }}">Visual Learning App</a>
+        </div>
+        
+        <h2>System Status</h2>
+        <div id="status">Checking system status...</div>
+    </div>
+
+    <script>
+        // Fetch and display app status
+        function updateStatus() {
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    let statusHtml = '<ul>';
+                    for (const [app, status] of Object.entries(data)) {
+                        statusHtml += `<li>${app}: <span style="color: ${status === 'running' ? 'green' : 'red'}">${status}</span></li>`;
+                    }
+                    statusHtml += '</ul>';
+                    document.getElementById('status').innerHTML = statusHtml;
+                })
+                .catch(error => {
+                    document.getElementById('status').innerHTML = 'Error checking system status';
+                });
+        }
+        
+        // Check status on page load and every 10 seconds
+        updateStatus();
+        setInterval(updateStatus, 10000);
+    </script>
+</body>
+</html>

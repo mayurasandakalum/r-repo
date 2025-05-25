@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login - විදුමග</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Sinhala Fonts - Nato Sans Sinhala -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Background grid -->
+    <div class="grid-bg"></div>
+
+    <!-- Decorative elements -->
+    <div class="sketch-line top-left-sketch"></div>
+    <div class="sketch-line bottom-right-sketch"></div>
+    <div class="deco-item deco-plus">+</div>
+    <div class="deco-item deco-multiply">×</div>
+    <div class="deco-item deco-equals">=</div>
+    <div class="deco-item deco-number-5">5</div>
+
+    <div class="container">
+        <h1>විදුමග Login</h1>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label for="email">විද්‍යුත් තැපෑල:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">මුරපදය:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <div class="form-group">
+                <label>ඔබ:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="user_type" value="teacher" required> ගුරුවරයා
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="user_type" value="student" required> ශිෂ්‍යයා
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit">පිවිසෙන්න</button>
+
+            <div class="links">
+                <p>ඔබ ගුරුවරයෙක්ද? <a href="{{ url_for('register') }}">මෙහි ලියාපදිංචි වන්න</a></p>
+                <p><a href="{{ url_for('index') }}">මුල් පිටුවට යන්න</a></p>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

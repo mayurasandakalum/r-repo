@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Student Dashboard - විදුමග</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <!-- Meta tag for responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <!-- Background grid -->
+    <div class="grid-bg"></div>
+
+    <!-- Decorative elements -->
+    <div class="sketch-line top-left-sketch"></div>
+    <div class="sketch-line bottom-right-sketch"></div>
+    <div class="deco-item deco-plus">+</div>
+    <div class="deco-item deco-multiply">×</div>
+    <div class="deco-item deco-equals">=</div>
+    <div class="deco-item deco-divide">÷</div>
+    <div class="deco-item deco-number-5">5</div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Student Dashboard</h1>
+            <div>
+                <a href="{{ url_for('index') }}" class="auth-button">Home</a>
+                <a href="{{ url_for('logout') }}" class="auth-button" style="background-color: #ef4444;">Logout</a>
+            </div>
+        </div>
+
+        <nav class="dashboard-nav">
+            <ul>
+                <li><a href="#overview" class="nav-link active">Overview</a></li>
+                <li><a href="#apps" class="nav-link">Learning Apps</a></li>
+                <li><a href="/system_overview" class="nav-link">System Overview</a></li>
+            </ul>
+        </nav>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <section id="overview" class="dashboard-section active">
+            <div class="welcome-banner">
+                <div class="welcome-content">
+                    <h2>Welcome, {{ student.name if student and student.name else 'Student' }}!</h2>
+                    <p>Track your progress and access learning resources</p>
+                </div>
+                <div class="student-profile">
+                    <div class="profile-icon">{{ student.name[0] if student and student.name else 'S' }}</div>
+                    <div class="profile-details">
+                        <p><strong>Email:</strong> {{ student.email }}</p>
+                        {% if teacher %}
+                        <p><strong>Your Teacher:</strong> {{ teacher.name if teacher.name else teacher.email }}</p>
+                        {% endif %}
+                        <p><strong>Grade:</strong> {{ student.grade|replace('grade', 'Grade ')|capitalize if student and
+                            student.grade else 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Learning Style Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-brain"></i> Your Learning Style</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if student and student.learning_style %}
+                        <div class="learning-style-info">
+                            <div class="learning-style-icon {{ student.learning_style|lower }}">
+                                <i
+                                    class="fas fa-{{ 'eye' if student.learning_style == 'visual' else 'headphones' if student.learning_style == 'auditory' else 'book-open' if student.learning_style == 'reading' else 'hands' }}"></i>
+                            </div>
+                            <div class="learning-style-name">{{ student.learning_style|capitalize }}</div>
+                            <div class="learning-style-desc">
+                                {% if student.learning_style == 'visual' %}
+                                You learn best through visual elements like images, diagrams, and colors.
+                                {% elif student.learning_style == 'auditory' %}
+                                You learn best by listening to explanations and engaging in discussions.
+                                {% elif student.learning_style == 'reading' %}
+                                You learn best through reading and writing information down.
+                                {% elif student.learning_style == 'kinesthetic' %}
+                                You learn best through hands-on activities and physical engagement.
+                                {% else %}
+                                Your learning style has been identified.
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="placeholder-message">
+                            <i class="fas fa-info-circle"></i>
+                            <p>Your learning style hasn't been determined yet. Your teacher will help identify it soon!
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Progress Overview Card -->
+                <!-- <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-line"></i> Your Progress</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="progressStats" class="stats-container" {% if student and student.id
+                            %}data-user-id="{{ student.id }}" {% endif %}>
+                            <div class="progress-overview">
+                                <div class="progress-item">
+                                    <div class="circular-progress">
+                                        <svg viewBox="0 0 36 36" class="circular-chart">
+                                            <path class="circle-bg" d="M18 2.0845
+                                                a 15.9155 15.9155 0 0 1 0 31.831
+                                                a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                            <path class="circle" stroke-dasharray="75, 100" d="M18 2.0845
+                                                a 15.9155 15.9155 0 0 1 0 31.831
+                                                a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                            <text x="18" y="20.35" class="percentage">75%</text>
+                                        </svg>
+                                        <span class="progress-label">Overall</span>
+                                    </div>
+                                </div>
+                                <div class="progress-stats">
+                                    <div class="stat-row">
+                                        <span class="stat-label">Questions Completed:</span>
+                                        <span class="stat-value">24</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span class="stat-label">Correct Answers:</span>
+                                        <span class="stat-value">18</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span class="stat-label">Total Score:</span>
+                                        <span class="stat-value highlight">750 pts</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span class="stat-label">Last Session:</span>
+                                        <span class="stat-value">Today</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+                <!-- Recent Activities Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-history"></i> Recent Activities</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="activity-timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-icon success">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h4>Completed Kinesthetic Quiz</h4>
+                                    <p>Score: 85/100</p>
+                                    <span class="timeline-date">Today</span>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-icon info">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h4>Started Visual Learning Module</h4>
+                                    <p>Chapter 2: Shapes and Patterns</p>
+                                    <span class="timeline-date">Yesterday</span>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-icon primary">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h4>Achievement Unlocked</h4>
+                                    <p>Math Whiz: Completed 10 math problems</p>
+                                    <span class="timeline-date">3 days ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="quick-actions-grid">
+                            <a href="#apps" class="quick-action-btn">
+                                <i class="fas fa-laptop"></i>
+                                <span>Learning Apps</span>
+                            </a>
+                            <a href="{{ kinesthetic_url }}" class="quick-action-btn">
+                                <i class="fas fa-hands"></i>
+                                <span>Kinesthetic App</span>
+                            </a>
+                            <a href="{{ visual_url }}" class="quick-action-btn">
+                                <i class="fas fa-eye"></i>
+                                <span>Visual App</span>
+                            </a>
+                            <a href="/system_overview" class="quick-action-btn">
+                                <i class="fas fa-info-circle"></i>
+                                <span>System Overview</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="apps" class="dashboard-section">
+            <h2>Available Learning Applications</h2>
+
+            <div class="app-grid">
+                <div class="app-card featured">
+                    <h3>Kinesthetic Learning App</h3>
+                    <p>Tools and activities for kinesthetic learners who learn best through physical activities.</p>
+                    <p class="app-status">Ready to use</p>
+                    <a href="{{ kinesthetic_url }}" class="app-link">Open App</a>
+                </div>
+
+                <div class="app-card">
+                    <h3>Visual Learning App</h3>
+                    <p>Visual tools and resources for students who learn best through images and diagrams.</p>
+                    <p class="app-status">Available</p>
+                    <a href="{{ visual_url }}" class="app-link">Open App</a>
+                </div>
+
+                <div class="app-card">
+                    <h3>Auditory Learning App</h3>
+                    <p>Audio-based learning resources for students who learn best through listening and speaking.</p>
+                    <p class="app-status">Available</p>
+                    <a href="{{ audio_url }}" class="app-link">Open App</a>
+                </div>
+
+                <div class="app-card">
+                    <h3>Read/Write Learning App</h3>
+                    <p>Resources for students who prefer to learn through reading and writing exercises.</p>
+                    <p class="app-status">Available</p>
+                    <a href="{{ readwrite_url }}" class="app-link">Open App</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Replace dashboard.js with the new student_dashboard.js file -->
+    <script src="{{ url_for('static', filename='js/student_dashboard.js') }}"></script>
+
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Add styles for the student dashboard -->
+    <style>
+        /* Dashboard Overview Styles */
+        .welcome-banner {
+            background: linear-gradient(135deg, #4e73df, #224abe);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(78, 115, 223, 0.3);
+        }
+
+        .welcome-content h2 {
+            margin-top: 0;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-content p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .student-profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-icon {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .profile-details p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            background: #f8f9fc;
+            border-bottom: 1px solid #edf2f9;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #4e73df;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header h3 i {
+            margin-right: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Learning style styles */
+        .learning-style-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .learning-style-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .learning-style-icon.visual {
+            background: #4e73df;
+        }
+
+        .learning-style-icon.auditory {
+            background: #1cc88a;
+        }
+
+        .learning-style-icon.reading {
+            background: #f6c23e;
+        }
+
+        .learning-style-icon.kinesthetic {
+            background: #e74a3b;
+        }
+
+        .learning-style-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #5a5c69;
+        }
+
+        .learning-style-desc {
+            color: #858796;
+            line-height: 1.5;
+        }
+
+        .placeholder-message {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            color: #858796;
+            padding: 20px;
+        }
+
+        .placeholder-message i {
+            font-size: 36px;
+            color: #dddfeb;
+            margin-bottom: 15px;
+        }
+
+        /* Progress styles */
+        .progress-overview {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .progress-item {
+            max-width: 120px;
+        }
+
+        .circular-progress {
+            text-align: center;
+        }
+
+        .circular-chart {
+            display: block;
+            max-width: 100%;
+            max-height: 150px;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: #edf2f9;
+            stroke-width: 3.8;
+        }
+
+        .circle {
+            fill: none;
+            stroke-width: 3.8;
+            stroke-linecap: round;
+            stroke: #4e73df;
+            animation: progress 1s ease-out forwards;
+        }
+
+        @keyframes progress {
+            0% {
+                stroke-dasharray: 0 100;
+            }
+        }
+
+        .percentage {
+            fill: #5a5c69;
+            font-family: sans-serif;
+            font-size: 0.5em;
+            text-anchor: middle;
+            font-weight: bold;
+        }
+
+        .progress-label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #5a5c69;
+        }
+
+        .progress-stats {
+            flex: 1;
+            margin-left: 20px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #edf2f9;
+        }
+
+        .stat-row:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #858796;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #5a5c69;
+        }
+
+        .stat-value.highlight {
+            color: #4e73df;
+        }
+
+        /* Activity timeline styles */
+        .activity-timeline {
+            position: relative;
+        }
+
+        .activity-timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 15px;
+            width: 2px;
+            background: #edf2f9;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            padding-bottom: 20px;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-icon {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #4e73df;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+
+        .timeline-icon.primary {
+            background: #4e73df;
+        }
+
+        .timeline-icon.success {
+            background: #1cc88a;
+        }
+
+        .timeline-icon.info {
+            background: #36b9cc;
+        }
+
+        .timeline-icon.warning {
+            background: #f6c23e;
+        }
+
+        .timeline-icon.danger {
+            background: #e74a3b;
+        }
+
+        .timeline-content h4 {
+            margin: 0 0 5px;
+            font-size: 16px;
+        }
+
+        .timeline-content p {
+            margin: 0;
+            color: #858796;
+            font-size: 14px;
+        }
+
+        .timeline-date {
+            display: block;
+            font-size: 12px;
+            color: #b7b9cc;
+            margin-top: 5px;
+        }
+
+        /* Quick actions styles */
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .quick-action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fc;
+            border: 1px solid #edf2f9;
+            border-radius: 8px;
+            padding: 15px;
+            text-decoration: none;
+            color: #5a5c69;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .quick-action-btn:hover {
+            background: #4e73df;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .quick-action-btn i {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .welcome-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .student-profile {
+                margin-top: 20px;
+            }
+
+            .progress-overview {
+                flex-direction: column;
+            }
+
+            .progress-stats {
+                margin-left: 0;
+                margin-top: 20px;
+                width: 100%;
+            }
+
+            .quick-actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</body>
+
+</html>

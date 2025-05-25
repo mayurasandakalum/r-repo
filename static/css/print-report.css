@@ -1,0 +1,114 @@
+@media print {
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    color: #000;
+  }
+
+  .report-print-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #000;
+  }
+
+  .report-print-header h2 {
+    margin: 0 0 10px 0;
+    font-size: 24pt;
+  }
+
+  .report-print-header p {
+    margin: 0;
+    font-size: 10pt;
+    color: #666;
+  }
+
+  .report-overview {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+    justify-content: space-between;
+  }
+
+  .report-card {
+    width: 22%;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+
+  .report-card-icon {
+    display: none; /* Hide icons in print */
+  }
+
+  .vark-scores,
+  .subject-performance {
+    margin-bottom: 25px;
+  }
+
+  h4 {
+    margin-top: 25px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+  }
+
+  .subject-item,
+  .vark-bar-item {
+    margin-bottom: 8px;
+  }
+
+  .progress-bar,
+  .vark-bar-container {
+    height: 12px;
+    background: #eee;
+    margin: 5px 0;
+  }
+
+  .progress,
+  .vark-bar {
+    height: 100%;
+  }
+
+  .progress.low {
+    background-color: #ccc;
+  }
+  .progress.medium {
+    background-color: #999;
+  }
+  .progress.high {
+    background-color: #666;
+  }
+
+  .activities-list {
+    margin-bottom: 25px;
+  }
+
+  .activity-item {
+    padding: 8px 0;
+    border-bottom: 1px dotted #ddd;
+  }
+
+  .activity-icon {
+    display: none; /* Hide icons in print */
+  }
+
+  .activity-meta {
+    font-size: 8pt;
+    color: #666;
+  }
+
+  .report-actions {
+    display: none; /* Hide buttons in print */
+  }
+
+  /* Add page break to avoid splitting sections */
+  .vark-scores,
+  .subject-performance,
+  .activities-list {
+    page-break-inside: avoid;
+  }
+}

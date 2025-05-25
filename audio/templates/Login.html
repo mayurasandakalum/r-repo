@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ලොගින් වෙන්න - Learn-Pal</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <h1>Learn-Pal වෙත සාදරයෙන් පිළිගනිමු</h1>
+        <p>ඔබගේ දරුවාගේ අධ්‍යාපන කෙටුම්පත් වෙත ප්‍රවේශවීම සඳහා කරුණාකර ලොගින් වන්න</p>
+        
+        <form action="/form_login" method="post" >
+            <div class="input-group">
+                <label for="username">පරිශීලක නාමය</label>
+                <input type="text" id="username" name="username" placeholder="පරිශීලක නාමය">
+            </div>
+            <div class="input-group">
+                <label for="password">මුරපදය</label>
+                <input type="password" id="password" name="password" placeholder="මුරපදය">
+            </div>
+            <button type="submit" class="login-button">ලොගින් වෙන්න</button>
+            <div class="register-link">
+                <p>ලියාපදිංචි වී නොමැතිද? <a href="/registration">මෙතනින් ලියාපදිංචි වන්න</a></p>
+            </div>
+        </form>
+    </div>
+    <h1>{{info}}</h1>
+</body>
+</html>

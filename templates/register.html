@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ගුරු ලියාපදිංචිය - ගණිත ඉගෙනුම් මධ්‍යස්ථානය</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Sinhala Fonts - Nato Sans Sinhala -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Background grid -->
+    <div class="grid-bg"></div>
+
+    <!-- Decorative elements -->
+    <div class="sketch-line top-left-sketch"></div>
+    <div class="sketch-line bottom-right-sketch"></div>
+    <div class="deco-item deco-plus">+</div>
+    <div class="deco-item deco-multiply">×</div>
+    <div class="deco-item deco-equals">=</div>
+    <div class="deco-item deco-number-5">5</div>
+    <div class="deco-item deco-divide">÷</div>
+
+    <div class="container">
+        <h1>ගුරු ලියාපදිංචිය</h1>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('register') }}">
+            <div class="form-group">
+                <label for="name">සම්පූර්ණ නම:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">විද්‍යුත් තැපෑල:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="school">පාසල / ආයතනය:</label>
+                <input type="text" id="school" name="school" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">මුරපදය:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">මුරපදය තහවුරු කරන්න:</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </div>
+
+            <button type="submit">ගුරුවරයෙකු ලෙස ලියාපදිංචි වන්න</button>
+
+            <div class="links">
+                <p>දැනටමත් ගිණුමක් තිබේද? <a href="{{ url_for('login') }}">මෙහි පිවිසෙන්න</a></p>
+                <p><a href="{{ url_for('index') }}">මුල් පිටුවට යන්න</a></p>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

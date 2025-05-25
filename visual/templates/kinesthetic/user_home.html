@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Let's Quiz | Mixed Questions{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5">ප්‍රශ්න පරීක්ෂණය</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h2 class="card-title">මිශ්‍ර පාඩම් මඟින් ඉගෙනගන්න</h2>
+                    <p class="card-text">විවිධ විෂය ක්ෂේත්‍ර වල මිශ්‍ර ප්‍රශ්න 15 (එකතු කිරීම, අඩු කිරීම සහ කාලය)</p>
+
+                    {% if kinesthetic_profile and kinesthetic_profile.mixed_quiz_completed %}
+                    <p class="card-text text-success">සම්පූර්ණයි! ඔබේ ලකුණු: {{ kinesthetic_profile.total_score }}</p>
+                    <a href="{{ url_for('kinesthetic.leaderboard') }}" class="btn btn-primary">
+                        ප්‍රතිඵල බලන්න
+                    </a>
+                    {% else %}
+                    <p class="card-text">සම්පූර්ණ කළ ප්‍රශ්න:
+                        {% if kinesthetic_profile %}
+                        {{ kinesthetic_profile.current_lesson_attempts }}/15
+                        {% else %}
+                        0/15
+                        {% endif %}
+                    </p>
+                    <a href="{{ url_for('kinesthetic.play') }}" class="btn btn-primary btn-lg">
+                        <i class="fa fa-play-circle"></i> පරීක්ෂණය ආරම්භ කරන්න
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('kinesthetic.manage_questions') }}">Question Bank</a></li>
+            <li class="breadcrumb-item"><a
+                    href="{{ url_for('kinesthetic.edit_question', question_id=request.view_args.get('question_id', subquestion.question_id if subquestion else None)) }}">Question
+                    Details</a></li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Main Form Column -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h3 class="card-title mb-4">{{ title }}</h3>
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        {{ form.csrf_token }} <!-- Add this line to include the CSRF token -->
+
+                        <!-- Question Text -->
+                        <div class="mb-4">
+                            {{ form.text.label(class="form-label fw-bold") }}
+                            <div class="form-text mb-2">Enter the sub-question text that students will see.</div>
+                            {{ form.text(class="form-control", rows=3) }}
+                        </div>
+
+                        <!-- Instructions -->
+                        <div class="mb-4">
+                            {{ form.instructions.label(class="form-label fw-bold") }}
+                            <div class="form-text mb-2">Provide clear instructions on how to answer this question.</div>
+                            {{ form.instructions(class="form-control", rows=2) }}
+                        </div>
+
+                        <!-- Answer Details -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                {{ form.correct_answer.label(class="form-label fw-bold") }}
+                                <div class="form-text mb-2">The expected correct answer.</div>
+                                {{ form.correct_answer(class="form-control") }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.answer_type.label(class="form-label fw-bold") }}
+                                <div class="form-text mb-2">Type of answer expected from students.</div>
+                                {{ form.answer_type(class="form-select") }}
+                            </div>
+                        </div>
+
+                        <!-- Answer Constraints -->
+                        <div class="card bg-light border-0 mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Answer Constraints</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        {{ form.min_value.label(class="form-label") }}
+                                        {{ form.min_value(class="form-control") }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        {{ form.max_value.label(class="form-label") }}
+                                        {{ form.max_value(class="form-control") }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        {{ form.time_format.label(class="form-label") }}
+                                        {{ form.time_format(class="form-control") }}
+                                        <div class="form-text">e.g., HH:mm</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Difficulty and Points -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0 h-100">
+                                    <div class="card-body">
+                                        {{ form.difficulty_level.label(class="form-label fw-bold") }}
+                                        <div class="form-text mb-2">Rate from 1 (easiest) to 5 (hardest)</div>
+                                        {{ form.difficulty_level(class="form-control") }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0 h-100">
+                                    <div class="card-body">
+                                        {{ form.points.label(class="form-label fw-bold") }}
+                                        <div class="form-text mb-2">Points awarded for correct answer</div>
+                                        {{ form.points(class="form-control") }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hint -->
+                        <div class="mb-4">
+                            {{ form.hint.label(class="form-label fw-bold") }}
+                            <div class="form-text mb-2">Optional hint to help students (leave empty for no hint)</div>
+                            {{ form.hint(class="form-control") }}
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex gap-2">
+                            {{ form.submit(class="btn btn-primary px-4") }}
+                            <a href="{{ url_for('kinesthetic.manage_questions') }}"
+                                class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Column -->
+        <div class="col-lg-4">
+            <!-- Tips Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3"><i class="bi bi-info-circle me-2"></i>Tips</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><i class="bi bi-check-lg text-success me-2"></i>Be specific and clear in your
+                            question text</li>
+                        <li class="mb-2"><i class="bi bi-check-lg text-success me-2"></i>Provide detailed instructions
+                        </li>
+                        <li class="mb-2"><i class="bi bi-check-lg text-success me-2"></i>Set appropriate difficulty
+                            level</li>
+                        <li class="mb-2"><i class="bi bi-check-lg text-success me-2"></i>Include helpful hints for
+                            complex questions</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Answer Types Card -->
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3"><i class="bi bi-lightbulb me-2"></i>Answer Types</h5>
+                    <div class="mb-3">
+                        <h6 class="text-primary mb-2">Number</h6>
+                        <p class="small text-muted mb-0">Use for numerical answers. Set min/max values to define valid
+                            range.</p>
+                    </div>
+                    <div>
+                        <h6 class="text-primary mb-2">Time</h6>
+                        <p class="small text-muted mb-0">Use for time-based answers. Specify time format (e.g., HH:mm).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+    }
+</style>
+{% endblock %}

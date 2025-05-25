@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ශ්‍රව්‍ය ඉගෙනීම</title>
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <style>
+      /* -------------------------
+       BODY & GENERAL STYLES
+    ------------------------- */
+    body {
+        font-family: Arial, sans-serif;
+        /* background-image: url("../Images/auditory.jpg"); */
+        background: linear-gradient(135deg,rgb(138, 140, 250),rgb(202, 148, 253),rgb(253, 150, 202));
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        margin: 0;
+        /* min-height: 100vh; */
+      }
+
+      /* -------------------------
+       NAVIGATION BAR
+    ------------------------- */
+      .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 15px 30px;
+        background-color: transparent;
+        color: #fff;
+        box-sizing: border-box;
+      }
+      
+      .title {
+        align-items: center;
+        font-size: 35px;
+        font-weight: bold;
+        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+        color: #333;
+        padding-top: 20px;
+      }
+
+      /* -------------------------
+       CHAT CONTAINER
+    ------------------------- */
+      .chat-container {
+        width: 80%;
+        max-width: 800px;
+        height: auto;
+        /* background: linear-gradient(135deg, #f2f5f5, #3ec8db); */
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 30px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin-bottom: 220px;
+        margin-top: 100px;
+        position: relative;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      .character-icon {
+        width: 70px;
+        position: absolute;
+        top: 30px;
+        left: 60px;
+      }
+
+      /* Question styling */
+      .question-area span {
+        font-family: serif;
+        font-size: 18px;
+      }
+
+      /* Lesson/Level styling */
+      .lesson-level-container {
+        /* margin-top: 10px;
+        font-family: serif;
+        font-size: 16px;
+        color: #444; */
+        font-size: 15px;
+        font-weight: 100;
+        color: #2b3172;
+        padding-bottom: 5px;
+        border-bottom: 2px solid #ddd;
+      }
+      .lesson-level-container p {
+        margin: 5px 0;
+      }
+
+      /* -------------------------
+       BUTTONS & ANIMATIONS
+    ------------------------- */
+      .question-btn {
+        font-size: 24px;
+        font-weight: 600;
+        color: #2b3172;
+        border: none;
+        cursor: pointer;
+        background: none;
+        margin-top: 20px;
+        text-decoration: underline;
+        font-family: serif;
+        animation: pulse 1.5s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      .controls {
+        margin-top: 20px;
+      }
+      .controls button {
+        background-color: #1ad846;
+        color: white;
+        border: none;
+        width: 200px;
+        margin-top: 15px;
+        padding: 10px 15px;
+        border-radius: 20px;
+        font-size: 17px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+        margin: 5px;
+        font-family: serif;
+        font-weight: 600;
+      }
+      .controls button.stop {
+        background-color: #d61c13;
+      }
+      .controls button:hover {
+        filter: brightness(90%);
+      }
+
+      .extra-controls {
+        margin-top: 20px;
+        /* text-align: center; */
+        /* width: 300px; */
+        
+      }
+      .extra-controls button {
+        background-color: #e2300d;
+        color: white;
+        width: 300px;
+        margin-top: 15px;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 17px;
+        font-style: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+        margin: 5px;
+        font-family: serif;
+      }
+      .extra-controls button.submit {
+        background-color: #007bff;
+      }
+      .extra-controls button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+
+      .next {
+        width: 300px;
+        margin-top: 15px;
+        font-family: serif;
+        text-align: center;
+        font-size: 17px;
+        font-weight: 600;
+        background-color: #149d0d;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 50px; 
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      .next:hover {
+        filter: brightness(90%);
+      }
+
+      .replay {
+        width: 300px;
+        margin-top: 15px;
+        font-family: serif;
+        font-size: 17px;
+        font-weight: 600;
+        background-color: #f39c12;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      .replay:hover {
+        filter: brightness(90%);
+      }
+
+      /* -------------------------
+       FEEDBACK
+    ------------------------- */
+      .feedback {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        font-family: serif;
+      }
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    {% include 'base.html' %}
+    
+    <div class="title">ශ්‍රව්‍ය ඉගෙනීම</div>
+    <!-- <div class="wrapper"> -->
+      <!-- Chatbox with Character Icon -->
+      <div class="chat-container">
+        <!-- Character Icon (optional if needed) -->
+        <!-- <img src="/static/Images/Q_man.png" alt="Character" class="character-icon"> -->
+        <!-- Display Lesson and Level -->
+        <div class="lesson-level-container">
+          <p>
+            <strong>පාඩම :</strong>
+            <span id="lesson">{{ question['Lesson'] }}</span>
+          </p>
+          <p>
+            <strong>මට්ටම :</strong>
+            <span id="level">{{ question['Level'] }}</span>
+          </p>
+        </div>
+
+        <div class="question-area">
+          <!-- Dynamic question text -->
+          <span data-question-id="{{ question['ID'] }}"></span>
+          <div class="image-area">
+            {% if image %}
+            <img
+              src="{{ url_for('static', filename=image) }}"
+              alt="Related Image"
+              style="height: 100px; width: 100px"
+            />
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Recording Controls -->
+        <div class="controls">
+          <button id="recordBtn"><i class="fas fa-microphone"></i>පිළිතුර සැපයීම</button>
+          <!-- Stopped button below (hidden by default) -->
+          <!-- <button id="stopBtn" class="stop" style="display: none;">
+          <i class="fas fa-stop"></i> Stop
+        </button> -->
+          <button id="playBtn" style="display: none">
+            <i class="fas fa-play"></i>ඇසීම
+          </button>
+        </div>
+
+        <!-- Retake and Submit Buttons -->
+        <div class="extra-controls">
+          <button id="retakeBtn" disabled>නැවත පිළිතුර දීම</button>
+          <button id="submitBtn" class="submit" disabled>පිළිතුර තහවුරු කිරීම</button>
+        </div>
+
+        <!-- Next Question Button -->
+        <button id="next" class="next">ඊළඟ ප්‍රශ්නය</button>
+
+        <button id="replay" class="replay">නැවත ප්‍රශ්නය ඇසීම</button>
+
+        <!-- Feedback -->
+        <div class="feedback" id="feedback"></div>
+      </div>
+<!-- </div> -->
+  
+
+    <script>
+      // DOM Elements
+      const stopBtn = document.getElementById("stopBtn");
+      const recordBtn = document.getElementById("recordBtn");
+      const playBtn = document.getElementById("playBtn");
+      const retakeBtn = document.getElementById("retakeBtn");
+      const submitBtn = document.getElementById("submitBtn");
+      const nextBtn = document.getElementById("next");
+      const feedback = document.getElementById("feedback");
+      const replay = document.getElementById("replay");
+      var audio_2
+
+      let mediaRecorder;
+      let audioChunks = [];
+      let isRecording = false;
+
+      document.addEventListener("DOMContentLoaded", () => {
+        //when the Flask server renders the HTML file before sending it to the browser
+        const questionID = "{{ question['ID'] }}";
+        audio_2 = new Audio(`/static/aud_records/tts_${questionID}_.wav`);
+        audio_2.play();
+
+        // Play recorded audio
+        replay.addEventListener("click", () => {
+          audio_2.play();
+        });
+
+        // Toggle recording on recordBtn click
+        recordBtn.addEventListener("click", async () => {
+          const questionElement = document.querySelector(".question-area span");
+          // Use "ID" from data-question-id
+          const questionID = questionElement.dataset.questionId;
+
+          if (!isRecording) {
+            // Start recording
+            isRecording = true;
+            recordBtn.style.backgroundColor = "red";
+            recordBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Recording';
+
+            const stream = await navigator.mediaDevices.getUserMedia({
+              audio: true,
+            });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+
+            mediaRecorder.ondataavailable = (event) => {
+              audioChunks.push(event.data);
+            };
+
+            mediaRecorder.start();
+          } else {
+            // Stop recording
+            isRecording = false;
+            recordBtn.style.backgroundColor = "";
+            recordBtn.innerHTML = '<i class="fas fa-microphone"></i> Record';
+
+            mediaRecorder.stop();
+            mediaRecorder.onstop = async () => {
+              const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+              const formData = new FormData();
+              formData.append("audio", audioBlob);
+              formData.append("questionID", questionID);
+
+              // Save audio file
+              await fetch("/save_audio", {
+                method: "POST",
+                body: formData,
+              });
+
+              console.log(`Audio file ${questionID}.wav saved successfully.`);
+              playBtn.style.display = "inline"; // Show play button
+              // Enable retake and submit
+              retakeBtn.disabled = false;
+              submitBtn.disabled = false;
+            };
+          }
+        });
+
+        // Play recorded audio
+        playBtn.addEventListener("click", () => {
+          const questionElement = document.querySelector(".question-area span");
+          const questionID = questionElement.dataset.questionId;
+          const audio = new Audio(`.audio/static/aud_records/${questionID}.wav`);
+          audio.play();
+        });
+
+        // Function to fetch the next question
+        function fetchNextQuestion() {
+          fetch("/next_question")
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                const questionData = data.question;
+                const questionArea = document.querySelector(
+                  ".question-area span"
+                );
+                questionArea.textContent = "";
+                questionArea.dataset.questionId = questionData.ID;
+
+                // Update Lesson and Level
+                document.getElementById("lesson").textContent =
+                  questionData.Lesson;
+                document.getElementById("level").textContent =
+                  questionData.Level;
+
+                // Update image if available
+                const imageArea = document.querySelector(".image-area");
+                if (data.Image) {
+                  imageArea.innerHTML = `<img src="${data.Image}" alt="Related Image" />`;
+                } else {
+                  imageArea.innerHTML = "";
+                }
+
+                // Reset or show play button depending on existing audio
+                if (data.audio_exists) {
+                  playBtn.style.display = "inline";
+                } else {
+                  playBtn.style.display = "none";
+                }
+
+                // Reset record button
+                recordBtn.style.backgroundColor = "";
+                recordBtn.innerHTML =
+                  '<i class="fas fa-microphone"></i> Record';
+
+                // (Optional) If want to automatically play TTS for new question:
+                audio_2 = new Audio(
+                  `/static/aud_records/tts_${questionData.ID}_.wav`
+                );
+                audio_2.play();
+
+                // Disable retake & submit until new recording
+                retakeBtn.disabled = true;
+                submitBtn.disabled = true;
+              } else {
+                if (!data.question) {
+                  window.location.href = "{{ url_for('speech_guide') }}";
+                } else {
+                  alert(data.message || "No more questions available.");
+                }
+              }
+            })
+            .catch((error) => {
+              console.error("Error fetching the next question:", error);
+            });
+        }
+
+        // Bind the Next button
+        nextBtn.addEventListener("click", fetchNextQuestion);
+      });
+
+      // Retake Answer
+      retakeBtn.addEventListener("click", () => {
+        playBtn.style.display = "none";
+        retakeBtn.disabled = true;
+        submitBtn.disabled = true;
+        recordBtn.style.display = "inline";
+        feedback.textContent = "";
+      });
+
+      // Submit Answer
+      /*submitBtn.addEventListener("click", () => {
+        fetch("/submit_audio")
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              if (data.correct) {
+                alert("ඔබගේ පිළිතුර නිවැරදියි.");
+              } else {
+                let msg =
+                  "ඔබගේ පිළිතුර වැරදියි. නිවැරදි පිළිතුර * " +
+                  data.answer +
+                  " *";
+                alert(msg);
+              }
+
+              playBtn.style.display = "none";
+
+              // Reset record button
+              recordBtn.style.backgroundColor = "";
+              recordBtn.innerHTML = '<i class="fas fa-microphone"></i> Record';
+
+              submitBtn.disabled = true;
+            } else {
+              alert(data.message || "No more questions available.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching the next question:", error);
+          });
+      });*/
+
+      submitBtn.addEventListener("click", () => {
+        fetch("/submit_audio")
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    if (data.correct) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'නිවැරදියි!',
+                            text: 'ඔබගේ ශබ්ද පිළිතුර නිවැරදියි.',
+                            confirmButtonText: 'හරි',
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'වැරදියි!',
+                            html: `ඔබගේ පිළිතුර වැරදියි.<br> නිවැරදි පිළිතුර: <b>${data.answer}</b>`,
+                            confirmButtonText: 'නැවත උත්සාහ කරන්න',
+                        });
+                    }
+
+                    playBtn.style.display = "none";
+
+                    // Reset record button
+                    recordBtn.style.backgroundColor = "";
+                    recordBtn.innerHTML = '<i class="fas fa-microphone"></i> Record';
+
+                    submitBtn.disabled = true;
+                } else {  //if server response is not successsful
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'දෝශයකි!',
+                        text: data.message || 'ප්‍රශ්න අවසානයට පැමිණියෙමු.',
+                        confirmButtonText: 'හරි',
+                    });
+                }
+            })
+            .catch((error) => { // handel the networking error
+                console.error("Error fetching the next question:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'දෝශයකි!',
+                    text: 'දෝශයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.',
+                    confirmButtonText: 'හරි',
+                });
+            });
+    });
+
+    </script>
+  </body>
+</html>

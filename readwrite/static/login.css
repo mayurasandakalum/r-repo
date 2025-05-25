@@ -1,0 +1,92 @@
+/* Set the background image for the page */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: url('/static/Images/background.jpg') no-repeat center center fixed; /* Add your background image here */
+    background-size: cover; /* Make the background cover the entire page */
+}
+
+/* Style the login container with a dark, semi-transparent background */
+.login-container {
+    width: 100%;
+    max-width: 350px;
+    padding: 20px 30px; /* Adjusted padding for a tighter layout */
+    border-radius: 10px;
+    background-color: rgba(34, 47, 62, 0.9); /* Darker color with 90% opacity */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+h1 {
+    font-size: 24px;
+    color: #ffffff;
+    margin-bottom: 10px; /* Space below the title */
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+p {
+    font-size: 14px;
+    color: #d1d1d1;
+    margin-bottom: 20px; /* Space below the subtitle */
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.input-group {
+    margin-bottom: 15px; /* Consistent spacing between fields */
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #e0e0e0;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    color: #333;
+}
+
+.login-button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px; /* Space between input and button */
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #28a745;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: sans-serif;
+}
+
+.login-button:hover {
+    background-color: #218838;
+}
+
+.register-link {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+.register-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}

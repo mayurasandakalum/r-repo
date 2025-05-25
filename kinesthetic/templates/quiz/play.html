@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if question is none %}
+<div class="container">
+    <div class="jumbotron my-4">
+        <h1>පුහුණුව අවසන්!</h1>
+        <p>ඔබ සියලුම ප්‍රශ්න සම්පූර්ණ කර ඇත.</p>
+        <a href="{{ url_for('quiz.leaderboard') }}" class="btn btn-primary">ප්‍රතිඵල බලන්න</a>
+    </div>
+</div>
+{% else %}
+<div class="container">
+    <!-- Add progress indicator with default value -->
+    <div class="progress mb-4">
+        <div class="progress-bar" role="progressbar" style="width: {{ ((5 - (remaining_questions or 5)) * 20) }}%"
+            aria-valuenow="{{ 5 - (remaining_questions or 5) }}" aria-valuemin="0" aria-valuemax="5">
+            {{ 5 - (remaining_questions or 5) }}/5 Questions
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> තව ප්‍රශ්න {{ remaining_questions or 5 }} යි
+    </div>
+
+    <div class="jumbotron my-4">
+        <!-- Main question with HTML content -->
+        {{ question.text|safe }}
+
+        <!-- Sub questions in accordion -->
+        <div class="accordion mt-4" id="subQuestionsAccordion">
+            {% for sub_q in question.sub_questions %}
+            <div class="card">
+                <div class="card-header" id="heading{{ loop.index }}">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link w-100 text-start d-flex justify-content-between align-items-center"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}">
+                            <span>{{ sub_q.text }}</span>
+                            <span>
+                                <span class="badge bg-primary me-2">ලකුණු {{ sub_q.points }}</span>
+                                <span class="badge bg-secondary">මට්ටම {{ sub_q.difficulty_level }}</span>
+                            </span>
+                        </button>
+                    </h2>
+                </div>
+
+                <div id="collapse{{ loop.index }}" class="collapse" data-bs-parent="#subQuestionsAccordion">
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('quiz.play') }}" class="answer-form"
+                            enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="question_pk" value="{{ question.id }}">
+                            <input type="hidden" name="answer_method" value="{{ question.answer_method }}">
+                            <input type="hidden" name="sub_question_id" value="{{ sub_q.id }}">
+
+                            <!-- Instructions -->
+                            {% if sub_q.instructions %}
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> {{ sub_q.instructions }}
+                            </div>
+                            {% endif %}
+
+                            <!-- Answer interface based on method -->
+                            <div class="answer-interface p-4 text-center">
+                                <!-- Method-specific instructions -->
+                                <h5>
+                                    {% if question.answer_method == 'abacus' %}
+                                    අබැකස් උපකරණය පෙන්වන්න
+                                    {% elif question.answer_method == 'analog_clock' %}
+                                    අනලොග් ඔරලෝසුව පෙන්වන්න
+                                    {% else %}
+                                    ඩිජිටල් ඔරලෝසුව පෙන්වන්න
+                                    {% endif %}
+                                </h5>
+
+                                <!-- Answer constraints -->
+                                {% if sub_q.answer_type == 'number' and sub_q.min_value and sub_q.max_value %}
+                                <p class="text-muted">අගය {{ sub_q.min_value }} සහ {{ sub_q.max_value }} අතර විය යුතුය
+                                </p>
+                                {% endif %}
+                                {% if sub_q.answer_type == 'time' and sub_q.time_format %}
+                                <p class="text-muted">වේලාව {{ sub_q.time_format }} ආකෘතියට පෙන්වන්න</p>
+                                {% endif %}
+
+                                <!-- Webcam capture -->
+                                <div id="webcam{{ loop.index }}Container" class="mt-3">
+                                    <video id="webcam{{ loop.index }}" autoplay playsinline
+                                        class="w-100 rounded"></video>
+                                    <button type="button" class="btn btn-primary mt-2"
+                                        onclick="captureImage('webcam{{ loop.index }}')">
+                                        <i class="fas fa-camera me-2"></i>Capture
+                                    </button>
+                                </div>
+
+                                <!-- Submit button -->
+                                <button type="submit" class="btn btn-success mt-3">
+                                    <i class="fas fa-paper-plane me-2"></i>පිළිතුර යවන්න
+                                </button>
+                            </div>
+
+                            <!-- Hint section -->
+                            {% if sub_q.hint %}
+                            <div class="hint-section mt-3">
+                                <button class="btn btn-outline-info btn-sm" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#hint{{ loop.index }}">
+                                    <i class="fas fa-lightbulb me-1"></i>උදව්වක් ලබා ගන්න
+                                </button>
+                                <div class="collapse mt-2" id="hint{{ loop.index }}">
+                                    <div class="card card-body">
+                                        {{ sub_q.hint }}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Webcam handling script -->
+<script>
+    // ...existing webcam JavaScript code...
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Let's Quiz | {{ subject_name }} Instructions{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">{{ subject_name }}</h1>
+
+                    {% if subject == 'addition' %}
+                    <div class="instructions">
+                        <h3>එකතු කිරීම පාඩමේ උපදෙස්</h3>
+                        <ul>
+                            <li>Abacus භාවිතා කර එකතු කිරීම් ගණන් හදන්න.</li>
+                            <li>ඔබේ webcam එක භාවිතා කර abacus පෙන්වන්න.</li>
+                            <li>සෑම පිළිතුරක් සදහාම ලකුණු ලබා දෙනු ඇත.</li>
+                        </ul>
+                    </div>
+
+                    {% elif subject == 'subtraction' %}
+                    <div class="instructions">
+                        <h3>අඩු කිරීම පාඩමේ උපදෙස්</h3>
+                        <ul>
+                            <li>Abacus භාවිතා කර අඩු කිරීම් ගණන් හදන්න.</li>
+                            <li>ඔබේ webcam එක භාවිතා කර abacus පෙන්වන්න.</li>
+                            <li>සෑම පිළිතුරක් සදහාම ලකුණු ලබා දෙනු ඇත.</li>
+                        </ul>
+                    </div>
+
+                    {% else %}
+                    <div class="instructions">
+                        <h3>කාලය පාඩමේ උපදෙස්</h3>
+                        <ul>
+                            <li>Analog/Digital clock භාවිතා කර කාලය පෙන්වන්න.</li>
+                            <li>ඔබේ webcam එක භාවිතා කර clock එක පෙන්වන්න.</li>
+                            <li>සෑම පිළිතුරක් සදහාම ලකුණු ලබා දෙනු ඇත.</li>
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('kinesthetic.play', subject=subject) }}" class="btn btn-primary btn-lg">
+                            පාඩම ආරම්භ කරන්න
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

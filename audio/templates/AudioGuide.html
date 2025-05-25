@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ශ්‍රව්‍ය පුහුණුව</title>
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <!-- <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <title>Write Guide</title> -->
+      <!-- Font Awesome -->
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      />
+      <style>
+          /* General Styles */
+          body {
+              font-family: Arial, sans-serif;
+              /*background-image: url('/static/Images/auditory.jpg');*/
+              background: linear-gradient(135deg,rgb(138, 140, 250),rgb(202, 148, 253),rgb(253, 150, 202));
+              background-size: cover;
+              background-position: center;
+              background-repeat: no-repeat;
+              display: flex;
+              flex-direction: column;
+              min-height: 100vh;
+              margin: 0;
+          }
+    
+          .wrapper {
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              padding: 20px;
+          }
+    
+          /* Centered Lesson Heading */
+          .lesson-heading {
+              font-size: 30px;
+              font-weight: bold;
+              text-align: center;
+              color: #2b3172;
+              margin-bottom: 20px;
+              font-family: 'Lucida Sans', sans-serif;
+          }
+    
+          /* Results Container */
+          .results-container {
+              width: 80%;
+              max-width: 600px;
+              margin: 20px auto;
+              padding: 10px;
+              background-color: rgba(255, 255, 255, 0.8);
+              border: 2px solid #ccc;
+              border-radius: 10px;
+          }
+    
+          .results-container h3 {
+              margin-top: 0;
+              text-align: center;
+              color: #2b3172;
+          }
+    
+          .results-container ul {
+              list-style: none;
+              padding-left: 0;
+              margin: 10px 0;
+          }
+    
+          .results-container li {
+              margin: 5px 0;
+              font-size: 16px;
+          }
+    
+          /* Message Container */
+          .message-container {
+              width: 80%;
+              max-width: 600px;
+              margin: 10px auto;
+              padding: 10px;
+              border-radius: 10px;
+              background-color: rgba(255, 255, 255, 0.8);
+              text-align: center;
+              font-style: italic;
+          }
+    
+          /* Images Container */
+          .images-container {
+              margin: 20px auto;
+              overflow-y: auto;      /* Allows vertical scrolling if needed */
+              border: 2px solid #ccc;
+              border-radius: 10px;
+              background-color: rgba(255, 255, 255, 0.8);
+              padding: 10px;
+          }
+    
+          /* Each media item (image + button) in a row */
+          .media-item {
+              display: flex;
+              align-items: center;
+              margin: 15px 0;
+          }
+    
+          /* The image is 75% width */
+          .media-item img {
+              width: 75%;
+              height: auto;
+              margin-right: 10px;
+          }
+    
+          /* Button to play audio */
+          .audio-btn {
+              background-color: #007bff;
+              color: #fff;
+              border: none;
+              border-radius: 30px;
+              padding: 10px 15px;
+              cursor: pointer;
+              font-size: 14px;
+              display: flex;
+              align-items: center;
+              transition: background 0.3s;
+          }
+    
+          /* .audio-btn i {
+              margin-right: 5px;
+          } */
+    
+          .audio-btn:hover {
+              filter: brightness(90%);
+          }
+    
+          /* Complete Button */
+          .complete-btn {
+              margin-top: 20px;
+              padding: 10px 20px;
+              font-size: 16px;
+              cursor: pointer;
+              border-radius: 30px;
+              border: none;
+              background-color: #09ff00; /* bright green */
+              color: #fff;
+              transition: background 0.3s;
+          }
+    
+          .complete-btn:hover {
+              filter: brightness(90%);
+          }
+    
+          /* Footer */
+          .footer {
+              width: 100%;
+              background-color: #333;
+              color: #fff;
+              padding: 20px 0;
+              display: flex;
+              justify-content: center;
+          }
+    
+          .footer-content {
+              width: 90%;
+              max-width: 1000px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              text-align: center;
+          }
+    
+          /* Navbar */
+          .navbar {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              width: 100%;
+              padding: 15px 30px;
+              background-color: transparent;
+              color: #fff;
+          }
+    
+          .logo img {
+              height: 40px;
+          }
+    
+          .logout-btn {
+              color: #fff;
+              background-color: #ff3b30;
+              padding: 10px 20px;
+              text-decoration: none;
+              border-radius: 30px;
+              transition: background 0.3s;
+              font-family: serif;
+          }
+    
+          .logout-btn:hover {
+              filter: brightness(90%);
+          }
+    
+          .title {
+              /* font-size: 35px;
+              font-weight: bold;
+              font-family: 'Lucida Sans', sans-serif;
+              color: #333; */
+                align-items: center;
+                font-size: 35px;
+                font-weight: bold;
+                font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+                "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+                color: #333;
+                padding-top: 20px;
+                padding-left: 490px;
+          }
+      </style>
+    </head>
+    <body>
+
+        {% include 'base.html' %}
+            
+        <div class="title">ශ්‍රව්‍ය පිළිතුරු පුනරීක්ෂණය</div>
+    
+        <div class="wrapper">
+            <!-- Results Container -->
+            <div class="results-container">
+                <h3>ඔබගේ ප්‍රතිඵල</h3>
+                <ul>
+                    {% for lesson_key, result_val in results.items() %}
+                        <li>{{ lesson_key }} ප්‍රතිඵල : {{ result_val }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+    
+            <!-- Message Container -->
+            <div class="message-container">
+                {{ message }}
+            </div>
+    
+            <!-- Centered Lesson Heading -->
+            <h1 class="lesson-heading">පාඩම {{ lesson_id }}</h1>
+    
+            <!-- Images Container -->
+            <div class="images-container">
+                {% for image_path in images %}
+                <div class="media-item">
+                    <!-- Image at 75% width -->
+                    <img src="static/{{ image_path }}" alt="Lesson Image" />
+                    <!-- Audio play button that calls a JS function with the image path -->
+                    <button class="audio-btn" onclick="playAudio('{{ image_path }}')">
+                        <i class="fas fa-play-circle"></i>ශ්‍රව්‍ය වාදනය කරන්න
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+    
+            <!-- Complete Button -->
+            <!-- Example usage: returning to    ing_writing_learning page -->
+            <a href="auditory_learning">
+              <button id="completeBtn" class="complete-btn">අපහසු පාඩම පිළිබඳ අවබෝධයක් ලබාගත්තා</button>
+            </a>
+        </div>
+    
+    
+        <script>
+            
+          function playAudio(imagePath) {
+    
+              let baseName = imagePath.split('.')[0];
+              let audio_f = `tts_${baseName}_.wav`;
+              const audioSrc = 'static/aud_records/' + audio_f;
+    
+              const audio = new Audio(audioSrc);
+              audio.play().catch(err => {
+                  console.error("Error playing audio:", err);
+                  alert("Audio file not found or cannot be played.");
+              });
+          }
+    
+    
+        </script>
+    </body>
+    </html>
+    
+    
+
+

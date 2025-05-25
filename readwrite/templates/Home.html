@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home.css') }}">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans Sinhala', sans-serif;
+            
+        }
+        .container-main {
+            text-align: center;
+            padding: 50px;
+            margin-top: 30px;
+        }
+        
+        .dashboard-container {
+            text-align: center;
+            padding: 50px;
+        }
+        .learning-methods {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .learning-btn {
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            width:250px;
+        }
+               
+
+        
+    </style>
+</head>
+<body>
+    {% include 'base.html' %}
+    
+    <div class="container-main">
+        <h1>කියවා ලිවීමේ ප්‍රශ්නාවලිය</h1>
+        
+    </div>
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <h2 class="card-title">පළමු ප්‍රශ්නාවලිය</h2>
+        <h1 class="card-title2">ඔබේ කුසලතා පරීක්ෂාකර දැනුම වර්ධනය කරගමු.</h1>
+        
+        <p class="card-text">මෙහි <u>භාග</u>, <u> බෙදීම </u>, සහ <u>ගුණ කිරීම</u> යන විෂයන් වලින්
+            මිශ්‍ර ප්‍රශ්න 15 ක් අඩංගු වේ.</p>
+        <div class="learning-methods">            
+            <a href="reading_writing_learning" class="learning-btn1 reading-writing">ප්‍රශ්නාවලිය ආරම්භ කරන්න</a>
+        </div>
+    </div>
+
+    
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Write Guide</title>
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+  />
+  <style>
+      /* General Styles */
+      body {
+          font-family: Arial, sans-serif;
+          background: linear-gradient(135deg,rgb(197, 179, 255),rgb(250, 137, 254),rgb(253, 150, 202));
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+          margin: 0;
+      }
+
+      .wrapper {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 20px;
+      }
+
+      /* Centered Lesson Heading */
+      .lesson-heading {
+          font-size: 30px;
+          font-weight: bold;
+          text-align: center;
+          color: #2b3172;
+          margin-bottom: 20px;
+          font-family: 'Lucida Sans', sans-serif;
+      }
+
+      /* Results Container */
+      .results-container {
+          width: 80%;
+          max-width: 600px;
+          margin: 20px auto;
+          padding: 10px;
+          background-color: rgba(255, 255, 255, 0.8);
+          border: 2px solid #ccc;
+          border-radius: 10px;
+      }
+
+      .results-container h3 {
+          margin-top: 0;
+          text-align: center;
+          color: #2b3172;
+          font-weight: bold;
+      }
+
+      .results-container ul {
+          list-style: none;
+          padding-left: 30px;
+          margin: 10px 0;
+      }
+
+      .results-container li {
+          margin: 5px 0;
+          font-size: 16px;
+      }
+
+      /* Message Container */
+      .message-container {
+          width: 80%;
+          max-width: 600px;
+          margin: 10px auto;
+          padding: 20px;
+          border-radius: 10px;
+          background-color: rgba(255, 255, 255, 0.8);
+          text-align: center;
+          font-style: italic;
+          font-size: 18px;
+          color:rgba(243, 29, 125, 0.8);
+          font-weight:bold;
+      }
+
+      /* Images Container */
+      .images-container {
+          margin: 20px auto;
+          overflow-y: auto;      /* Allows vertical scrolling if needed */
+          border: 2px solid #ccc;
+          border-radius: 10px;
+          background-color: rgba(255, 255, 255, 0.8);
+          
+      }
+
+      .images-container img {
+          display: block;
+          max-width: 100%; /* Constrain image to container width */
+          height: auto;    /* Maintain aspect ratio */
+          margin: 10px 0;
+      }
+
+      /* Complete Button */
+      .complete-btn {
+          margin-top: 20px;
+          padding: 10px 20px;
+          font-size: 18px;
+          cursor: pointer;
+          border-radius: 30px;
+          border: none;
+          background-color:rgb(49, 190, 2); /* bright green */
+          color: #fff;
+          transition: background 0.3s;
+      }
+
+      .complete-btn:hover {
+          filter: brightness(90%);
+      }   
+
+          
+      .title {
+          font-size: 35px;
+          font-weight: bold;
+          font-family: 'Lucida Sans', sans-serif;
+          color: #333;
+          padding-left:570px;
+      }
+  </style>
+</head>
+<body>
+    {% include 'base.html' %}
+    <div class="title">කියවා ලිවීමේ මාර්ගෝපදේශය</div>
+        
+    
+    <div class="wrapper">
+        <!-- Results Container -->
+        <div class="results-container">
+            <h3>ඔබගේ ප්‍රතිඵල</h3>
+            <ul>
+                {% for lesson_key, result_val in results.items() %}
+                    <li>{{ lesson_key }} ප්‍රතිඵල : {{ result_val }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Message Container -->
+        <div class="message-container">
+            {{ message }}
+        </div>
+
+        <!-- Centered Lesson Heading -->
+        <!-- Example usage: "Lesson {{ lesson_id }}" or "Lesson 1" from your Flask context -->
+        <h1 class="lesson-heading">පාඩම {{ lesson_id }}</h1>
+
+        <!-- Images Container -->
+        <div class="images-container">
+            {% for image_path in images %}
+                <!-- 
+                  'image_path' could be something like:
+                  url_for('static', filename='Images/...') or a direct link
+                -->
+                <img src="static/{{ image_path }}" alt="Lesson Image" />
+            {% endfor %}
+        </div>
+
+        <!-- Complete Button -->
+        <a href="reading_writing_learning" ><button id="completeBtn" class="complete-btn">ඔබගේ දැනුම පරීක්ෂා කිරීමට යොමු වන්න</button></a>
+    </div>
+
+    
+</body>
+</html>

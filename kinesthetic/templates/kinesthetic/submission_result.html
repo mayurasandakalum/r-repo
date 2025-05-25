@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Let's Quiz | Submission Result{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="jumbotron my-4">
+    <h3 class="text-info">{{ attempted_question.question.html|safe }}</h3>
+    <h4 class="text-secondary">{{ attempted_question.sub_question.text }}</h4>
+
+    <div class="row">
+      <div class="col-md-6">
+        <p><strong>ඔබේ පිළිතුර: </strong>{{ attempted_question.selected_choice.html|safe }}</p>
+        <p><strong>නිවැරදි පිළිතුර: </strong>{{ attempted_question.sub_question.correct_answer }}</p>
+
+        {% if attempted_question.is_correct %}
+        <h4 class="text-success">
+          <i class="fa fa-check-circle"></i> නිවැරදියි!! සුබ පැතුම්! 🙌
+
+          <!-- Add time tolerance message if detected value differs from expected but answer is correct -->
+          {% if attempted_question.result_data.detected_value != attempted_question.result_data.expected_value %}
+          {% if ':' in attempted_question.result_data.detected_value or ':' in
+          attempted_question.result_data.expected_value %}
+          <div class="time-tolerance">
+            <small>(±3 මිනිත්තු ඉවසීම තුළ පිළිගත හැකිය)</small>
+          </div>
+          {% endif %}
+          {% endif %}
+        </h4>
+        {% else %}
+        <h4 class="text-danger">
+          <i class="fa fa-times-circle"></i> ඔබේ පිළිතුර වැරදියි 😟
+        </h4>
+        {% endif %}
+      </div>
+
+      <div class="col-md-6">
+        {% if attempted_question.images.annotated_image %}
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <i class="fa fa-image"></i> විශ්ලේෂණය කරන ලද පිංතූරය
+          </div>
+          <div class="card-body text-center">
+            <img src="{{ attempted_question.images.annotated_image }}" alt="Analyzed abacus" class="img-fluid"
+              style="max-height: 300px;">
+          </div>
+          <div class="card-footer bg-light">
+            <small class="text-muted">
+              <i class="fa fa-info-circle"></i>
+              හඳුනාගත් අගය: {{ attempted_question.result_data.detected_value }},
+              අපේක්ෂිත අගය: {{ attempted_question.result_data.expected_value }}
+            </small>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <a class="btn btn-info" href="{{ url_for('kinesthetic.play') }}">
+        <i class="fa fa-arrow-right"></i> මීළඟ ප්‍රශ්නය පෙන්වන්න
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

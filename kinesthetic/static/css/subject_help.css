@@ -1,0 +1,294 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;600;700;800&display=swap");
+
+/* Basic reset and full-page styling */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  font-family: "Noto Sans Sinhala", "Nunito", sans-serif;
+  background-color: #000;
+}
+
+/* Video container takes up full page */
+.video-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 0;
+  background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Header containing the back button and title */
+.video-header {
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 20px;
+  z-index: 10;
+}
+
+.video-header h1 {
+  color: white;
+  font-weight: 800;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  margin: 0;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.back-button {
+  color: white;
+  font-size: 18px;
+  text-decoration: none;
+  padding: 10px 15px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px);
+  color: white;
+  text-decoration: none;
+}
+
+/* YouTube container and player styling */
+.youtube-container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.youtube-player {
+  width: 100%;
+  height: 540px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  position: relative;
+  background-color: #000;
+}
+
+.youtube-player iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Loading indicator styling */
+.loading-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+}
+
+/* Footer with action buttons */
+.video-footer {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.video-footer .btn {
+  font-size: 18px;
+  padding: 12px 25px;
+  border-radius: 50px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.video-footer .btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Play button overlay for when autoplay is blocked */
+.play-button-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.play-button-overlay i {
+  color: white;
+  font-size: 50px;
+}
+
+.play-button-overlay:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Video error styling */
+.video-error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 30px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  text-align: center;
+}
+
+.video-error p {
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.video-error .btn {
+  margin-top: 10px;
+  padding: 10px 20px;
+}
+
+/* Video completion message */
+.video-completion-message {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  color: #333;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  animation: fadeInUp 0.5s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Watched badge styling */
+.watched-badge {
+  background-color: rgba(
+    40,
+    167,
+    69,
+    0.9
+  ); /* Bootstrap success color with transparency */
+  color: white;
+  padding: 8px 15px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.watched-badge i {
+  font-size: 18px;
+}
+
+/* Video actions */
+.video-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+#mark-watched-btn {
+  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+#mark-watched-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-watched {
+  background-color: #198754 !important; /* Bootstrap success green */
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+/* For smaller screens */
+@media (max-width: 992px) {
+  .youtube-player {
+    height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .youtube-player {
+    height: 320px;
+  }
+}
+
+@media (max-width: 576px) {
+  .youtube-player {
+    height: 240px;
+  }
+
+  .video-header h1 {
+    font-size: 24px;
+  }
+
+  .video-header {
+    padding: 15px 10px;
+  }
+}

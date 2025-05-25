@@ -1,0 +1,214 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif, "Noto Sans Sinhala";
+}
+
+body {
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 0;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 500px;
+  width: 90%;
+  margin: 50px auto;
+  background-color: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 5;
+}
+
+.grid-bg {
+  background-image: linear-gradient(#e0e0e0 1px, transparent 1px),
+    linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
+  background-size: 20px 20px;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+/* Decorative elements */
+.sketch-line {
+  position: absolute;
+  border: 2px dashed #9370db;
+  z-index: 1;
+}
+
+.top-left-sketch {
+  width: 150px;
+  height: 80px;
+  border: none;
+  border-bottom: 2px dashed #9370db;
+  border-bottom-left-radius: 80px;
+  top: 30px;
+  left: 30px;
+  transform: rotate(10deg);
+}
+
+.bottom-right-sketch {
+  border: none;
+  border-bottom: 2px dashed #9370db;
+  width: 150px;
+  height: 80px;
+  border-bottom-right-radius: 80px;
+  bottom: 40px;
+  right: 40px;
+  transform: rotate(-15deg);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #6366f1;
+  font-size: 28px;
+  letter-spacing: 0.5px;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #4f46e5;
+}
+
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border-color: #6366f1;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.radio-group {
+  margin: 15px 0;
+  display: flex;
+  gap: 25px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.radio-option input {
+  margin-right: 8px;
+  accent-color: #6366f1;
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #4f46e5;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(99, 102, 241, 0.3);
+}
+
+.links {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.links a {
+  color: #6366f1;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.links a:hover {
+  color: #4338ca;
+  text-decoration: underline;
+}
+
+.flash-message {
+  padding: 15px;
+  margin-bottom: 25px;
+  background-color: rgba(236, 72, 153, 0.1);
+  color: #be185d;
+  border-radius: 8px;
+  font-weight: 500;
+  border-left: 4px solid #ec4899;
+}
+
+/* Decorative math elements */
+.deco-item {
+  position: fixed;
+  font-size: 24px;
+  z-index: 1;
+  color: rgba(106, 13, 173, 0.1);
+  pointer-events: none;
+}
+
+.deco-plus {
+  top: 15%;
+  left: 15%;
+  font-size: 40px;
+}
+
+.deco-multiply {
+  bottom: 20%;
+  right: 10%;
+  font-size: 36px;
+}
+
+.deco-equals {
+  top: 25%;
+  right: 20%;
+  font-size: 34px;
+}
+
+.deco-number-5 {
+  bottom: 15%;
+  left: 10%;
+  font-size: 38px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 90%;
+    padding: 25px;
+  }
+}

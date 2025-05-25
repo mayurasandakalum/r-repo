@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Teacher Dashboard - විදුමග</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <!-- Add datepicker styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <!-- Meta tag for responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <!-- Background grid -->
+    <div class="grid-bg"></div>
+
+    <!-- Decorative elements -->
+    <div class="sketch-line top-left-sketch"></div>
+    <div class="sketch-line bottom-right-sketch"></div>
+    <div class="deco-item deco-plus">+</div>
+    <div class="deco-item deco-multiply">×</div>
+    <div class="deco-item deco-equals">=</div>
+    <div class="deco-item deco-divide">÷</div>
+    <div class="deco-item deco-number-5">5</div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Teacher Dashboard</h1>
+            <div>
+                <a href="{{ url_for('index') }}" class="auth-button">Home</a>
+                <a href="{{ url_for('logout') }}" class="auth-button" style="background-color: #ef4444;">Logout</a>
+            </div>
+        </div>
+
+        <nav class="dashboard-nav">
+            <ul>
+                <li><a href="#overview" class="nav-link active">Overview</a></li>
+                <!-- <li><a href="#apps" class="nav-link">Learning Apps</a></li> -->
+                <li><a href="#students" class="nav-link">My Students</a></li>
+                <!-- <li><a href="#reports" class="nav-link">Progress Reports</a></li> -->
+                <li><a href="#learning-style-analysis" class="nav-link">Learning Styles</a></li>
+                <li><a href="/system_overview" class="nav-link">System Overview</a></li>
+            </ul>
+        </nav>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <section id="overview" class="dashboard-section active">
+            <div class="welcome-banner">
+                <div class="welcome-content">
+                    <h2>Welcome, {{ teacher.name if teacher and teacher.name else 'Teacher' }}!</h2>
+                    <p>Manage your classroom and track student progress</p>
+                </div>
+                <div class="teacher-profile">
+                    <div class="profile-icon">{{ teacher.name[0] if teacher and teacher.name else 'T' }}</div>
+                    <div class="profile-details">
+                        <p><strong>Email:</strong> {{ teacher.email }}</p>
+                        <p><strong>School:</strong> {{ teacher.school }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Student Statistics Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-users"></i> Student Statistics</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="stat-item">
+                            <div class="stat-value">{{ students|length }}</div>
+                            <div class="stat-label">Total Students</div>
+                        </div>
+                        <div class="stat-chart">
+                            <div class="stat-chart-bar">
+                                {% set visual_count = students|selectattr('learning_style', 'equalto',
+                                'visual')|list|length %}
+                                {% set auditory_count = students|selectattr('learning_style', 'equalto',
+                                'auditory')|list|length %}
+                                {% set reading_count = students|selectattr('learning_style', 'equalto',
+                                'reading')|list|length %}
+                                {% set kinesthetic_count = students|selectattr('learning_style', 'equalto',
+                                'kinesthetic')|list|length %}
+
+                                {% if students|length > 0 %}
+                                <div class="chart-segment visual"
+                                    style="width: {{ (visual_count / students|length * 100)|round }}%;"
+                                    title="Visual: {{ visual_count }} students"></div>
+                                <div class="chart-segment auditory"
+                                    style="width: {{ (auditory_count / students|length * 100)|round }}%;"
+                                    title="Auditory: {{ auditory_count }} students"></div>
+                                <div class="chart-segment reading"
+                                    style="width: {{ (reading_count / students|length * 100)|round }}%;"
+                                    title="Reading/Writing: {{ reading_count }} students"></div>
+                                <div class="chart-segment kinesthetic"
+                                    style="width: {{ (kinesthetic_count / students|length * 100)|round }}%;"
+                                    title="Kinesthetic: {{ kinesthetic_count }} students"></div>
+                                {% else %}
+                                <div class="chart-segment empty" style="width: 100%;" title="No students yet"></div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="stat-legend">
+                            <div class="legend-item"><span class="legend-color visual"></span> Visual</div>
+                            <div class="legend-item"><span class="legend-color auditory"></span> Auditory</div>
+                            <div class="legend-item"><span class="legend-color reading"></span> Reading</div>
+                            <div class="legend-item"><span class="legend-color kinesthetic"></span> Kinesthetic</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Card -->
+                <!-- <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                    </div>
+                    <div class="card-body quick-actions-grid">
+                        <a href="#students" class="quick-action-btn">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Add Student</span>
+                        </a>
+                        <form action="{{ url_for('classify_students') }}" method="post" class="quick-action-form">
+                            <button type="submit" class="quick-action-btn">
+                                <i class="fas fa-brain"></i>
+                                <span>Analyze Learning</span>
+                            </button>
+                        </form>
+                        <a href="/system_overview" class="quick-action-btn">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>System Analytics</span>
+                        </a>
+                        <a href="#learning-style-analysis" class="quick-action-btn">
+                            <i class="fas fa-glasses"></i>
+                            <span>Learning Styles</span>
+                        </a>
+                    </div>
+                </div> -->
+
+                <!-- Recent Activity Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="activity-timeline">
+                            <!-- These would normally be populated from backend data -->
+                            <div class="timeline-item">
+                                <div class="timeline-icon success">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h4>Learning styles analyzed</h4>
+                                    <p>Successfully classified 5 students</p>
+                                    <span class="timeline-date">Today</span>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-icon info">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h4>New student added</h4>
+                                    <p>Added Saman Perera to your class</p>
+                                    <span class="timeline-date">Yesterday</span>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-icon warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h4>System update</h4>
+                                    <p>New features were added to the platform</p>
+                                    <span class="timeline-date">3 days ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teaching Resources Card -->
+                <!-- <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-book"></i> Teaching Resources</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="resources-list">
+                            <a href="#" class="resource-item">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>VARK Learning Styles Guide</span>
+                            </a>
+                            <a href="#" class="resource-item">
+                                <i class="fas fa-video"></i>
+                                <span>Teaching Strategies Tutorial</span>
+                            </a>
+                            <a href="#" class="resource-item">
+                                <i class="fas fa-tasks"></i>
+                                <span>Lesson Plan Templates</span>
+                            </a>
+                            <a href="#" class="resource-item">
+                                <i class="fas fa-question-circle"></i>
+                                <span>Help & Documentation</span>
+                            </a>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </section>
+
+        <section id="students" class="dashboard-section">
+            <h2>Manage Students</h2>
+
+            <!-- Replace form with button to open modal -->
+            <div class="student-actions">
+                <button id="openAddStudentModal" class="submit-btn">Add New Student</button>
+            </div>
+
+            <div class="student-list">
+                <h3>My Students ({{ students|length }})</h3>
+                {% if students %}
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Gender</th>
+                            <th>Birthday</th>
+                            <th>Grade</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>{{ student.email }}</td>
+                            <td>{{ student.gender|capitalize if student.gender else 'N/A' }}</td>
+                            <td>{{ student.birthday if student.birthday else 'N/A' }}</td>
+                            <td>{{ student.grade|replace('grade', 'Grade ')|capitalize if student.grade else 'N/A' }}
+                            </td>
+                            <td>
+                                <button class="action-btn edit"
+                                    onclick="openEditModal('{{ student.id }}', '{{ student.name }}', '{{ student.email }}', '{{ student.gender }}', '{{ student.birthday }}', '{{ student.grade }}')">Edit</button>
+                                <a href="{{ url_for('delete_student', student_id=student.id) }}"
+                                    class="action-btn delete"
+                                    onclick="return confirm('Are you sure you want to delete this student?')">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>You have not added any students yet.</p>
+                {% endif %}
+            </div>
+        </section>
+
+        <section id="reports" class="dashboard-section">
+            <h2>Student Progress Reports</h2>
+
+            <div class="report-container">
+                <div class="report-filter">
+                    <select id="reportStudentFilter">
+                        <option value="">Select a student...</option>
+                        {% for student in students %}
+                        <option value="{{ student.id }}">{{ student.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button onclick="fetchStudentReport()" class="submit-btn">View Report</button>
+                </div>
+
+                <div id="reportContent" class="report-content">
+                    <p>Select a student to view their progress report.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="learning-style-analysis" class="dashboard-section">
+            <h2>Learning Style Analysis</h2>
+
+            <div class="analysis-grid">
+                <!-- VARK Overview Card -->
+                <div class="analysis-card main-card">
+                    <div class="card-header">
+                        <i class="fas fa-brain"></i>
+                        <h3>VARK Learning Styles</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="description">The VARK model categorizes learning preferences into four styles:</p>
+                        <div class="learning-styles-grid">
+                            <div class="style-item visual">
+                                <i class="fas fa-eye"></i>
+                                <h4>Visual</h4>
+                                <p>Learn best through graphs, charts, and visual aids</p>
+                            </div>
+                            <div class="style-item auditory">
+                                <i class="fas fa-headphones"></i>
+                                <h4>Auditory</h4>
+                                <p>Prefer listening and verbal discussions</p>
+                            </div>
+                            <div class="style-item reading">
+                                <i class="fas fa-book-reader"></i>
+                                <h4>Reading/Writing</h4>
+                                <p>Excel with written words and text-based inputs</p>
+                            </div>
+                            <div class="style-item kinesthetic">
+                                <i class="fas fa-hands"></i>
+                                <h4>Kinesthetic</h4>
+                                <p>Learn through experience and practice</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analysis Actions Card -->
+                <div class="analysis-card action-card">
+                    <div class="card-header">
+                        <i class="fas fa-cogs"></i>
+                        <h3>Analysis Actions</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="description">Run the VARK analysis to identify your students' learning preferences</p>
+                        <form action="{{ url_for('classify_students') }}" method="post" class="analysis-form">
+                            <button type="submit" class="analysis-button">
+                                <i class="fas fa-play"></i>
+                                Start Analysis
+                            </button>
+                        </form>
+                        <div class="analysis-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Students Analyzed</span>
+                                <span class="stat-value">{{ students|length }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Last Analysis</span>
+                                <span class="stat-value">Today</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <style>
+            /* Learning Style Analysis Styles */
+            #learning-style-analysis {
+                padding: 20px;
+            }
+
+            .analysis-grid {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 20px;
+                margin-top: 20px;
+            }
+
+            .analysis-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+                transition: transform 0.3s ease;
+            }
+
+            .analysis-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .analysis-card .card-header {
+                background: #f8f9fc;
+                padding: 20px;
+                border-bottom: 1px solid #e3e6f0;
+                display: flex;
+                align-items: center;
+            }
+
+            .analysis-card .card-header i {
+                font-size: 24px;
+                color: #4e73df;
+                margin-right: 15px;
+            }
+
+            .analysis-card .card-header h3 {
+                margin: 0;
+                color: #2e384d;
+                font-size: 20px;
+            }
+
+            .analysis-card .card-body {
+                padding: 20px;
+            }
+
+            .description {
+                color: #666;
+                margin-bottom: 20px;
+                font-size: 0.95rem;
+            }
+
+            .learning-styles-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+                margin-top: 20px;
+            }
+
+            .style-item {
+                padding: 20px;
+                border-radius: 10px;
+                text-align: center;
+                transition: transform 0.2s ease;
+            }
+
+            .style-item:hover {
+                transform: scale(1.05);
+            }
+
+            .style-item i {
+                font-size: 28px;
+                margin-bottom: 10px;
+            }
+
+            .style-item h4 {
+                margin: 10px 0;
+                font-size: 18px;
+            }
+
+            .style-item p {
+                font-size: 14px;
+                color: #666;
+                margin: 0;
+            }
+
+            .style-item.visual {
+                background: linear-gradient(135deg, #e8f0fe, #d4e4fd);
+                color: #4285f4;
+            }
+
+            .style-item.auditory {
+                background: linear-gradient(135deg, #e6f4ea, #ceead6);
+                color: #34a853;
+            }
+
+            .style-item.reading {
+                background: linear-gradient(135deg, #fef6e6, #fcecc9);
+                color: #fbbc04;
+            }
+
+            .style-item.kinesthetic {
+                background: linear-gradient(135deg, #fce8e6, #fad2cf);
+                color: #ea4335;
+            }
+
+            .analysis-form {
+                text-align: center;
+                margin: 20px 0;
+            }
+
+            .analysis-button {
+                background: #4e73df;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 6px;
+                font-size: 16px;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                transition: background 0.3s ease;
+            }
+
+            .analysis-button:hover {
+                background: #2e59d9;
+            }
+
+            .analysis-stats {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                margin-top: 20px;
+            }
+
+            .analysis-stats .stat-item {
+                background: #f8f9fc;
+                padding: 15px;
+                border-radius: 8px;
+                text-align: center;
+            }
+
+            .analysis-stats .stat-label {
+                display: block;
+                color: #666;
+                font-size: 14px;
+                margin-bottom: 5px;
+            }
+
+            .analysis-stats .stat-value {
+                display: block;
+                font-size: 20px;
+                font-weight: bold;
+                color: #4e73df;
+            }
+
+            @media (max-width: 768px) {
+                .analysis-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .learning-styles-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+
+    </div>
+
+    <!-- Add Student Modal -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeAddModal">&times;</span>
+            <h2>Add New Student</h2>
+            <form action="{{ url_for('add_student') }}" method="post">
+                <div class="form-group">
+                    <label for="student_name">Student Name:</label>
+                    <input type="text" id="student_name" name="student_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="student_email">Email:</label>
+                    <input type="email" id="student_email" name="student_email" required>
+                </div>
+                <div class="form-group">
+                    <label for="student_password">Password:</label>
+                    <input type="password" id="student_password" name="student_password" required>
+                </div>
+                <div class="form-group">
+                    <label for="student_gender">Gender:</label>
+                    <select id="student_gender" name="student_gender" required>
+                        <option value="">Select gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="student_birthday">Birthday:</label>
+                    <input type="text" id="student_birthday" name="student_birthday" class="datepicker" required>
+                </div>
+                <div class="form-group">
+                    <label for="student_grade">Grade:</label>
+                    <select id="student_grade" name="student_grade" required>
+                        <option value="">Select grade</option>
+                        <option value="grade4">Grade 4</option>
+                        <option value="grade5">Grade 5</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Add Student</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div id="editStudentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Edit Student</h2>
+            <form id="editStudentForm">
+                <input type="hidden" id="edit_student_id" name="student_id">
+                <div class="form-group">
+                    <label for="edit_student_name">Student Name:</label>
+                    <input type="text" id="edit_student_name" name="student_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_student_email">Email:</label>
+                    <input type="email" id="edit_student_email" name="student_email" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_student_gender">Gender:</label>
+                    <select id="edit_student_gender" name="student_gender">
+                        <option value="">Select gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit_student_birthday">Birthday:</label>
+                    <input type="text" id="edit_student_birthday" name="student_birthday" class="datepicker">
+                </div>
+                <div class="form-group">
+                    <label for="edit_student_grade">Grade:</label>
+                    <select id="edit_student_grade" name="student_grade">
+                        <option value="">Select grade</option>
+                        <option value="grade4">Grade 4</option>
+                        <option value="grade5">Grade 5</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Update Student</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add jQuery and jQuery UI for datepicker -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script>
+        function fetchStudentReport() {
+            const studentId = document.getElementById('reportStudentFilter').value;
+            if (!studentId) {
+                alert('Please select a student');
+                return;
+            }
+
+            // Show loading indicator
+            document.getElementById('reportContent').innerHTML = `
+                <div class="text-center mt-4 mb-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading student progress data...</p>
+                </div>
+            `;
+
+            fetch(`/api/student/${studentId}/progress`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('reportContent').innerHTML =
+                            `<p class="error-message">${data.error}</p>`;
+                        return;
+                    }
+
+                    // Format date if present
+                    const formatDate = (dateString) => {
+                        if (!dateString) return 'N/A';
+                        try {
+                            const date = new Date(dateString);
+                            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                        } catch (e) {
+                            return dateString;
+                        }
+                    };
+
+                    // Build report HTML
+                    let reportHTML = `
+                        <div class="report-header">
+                            <h3>${data.student_name}'s Progress Report</h3>
+                            <p class="report-meta">Grade: ${data.grade ? data.grade.replace('grade', 'Grade ').toUpperCase() : 'N/A'} | Last Activity: ${formatDate(data.last_active)}</p>
+                        </div>
+                        
+                        <div class="report-overview">
+                            <div class="report-card">
+                                <div class="report-card-icon"><i class="fas fa-trophy"></i></div>
+                                <div class="report-card-value">${data.total_score || 0}</div>
+                                <div class="report-card-label">Total Score</div>
+                            </div>
+                            <div class="report-card">
+                                <div class="report-card-icon"><i class="fas fa-tasks"></i></div>
+                                <div class="report-card-value">${data.questions_completed || 0}</div>
+                                <div class="report-card-label">Quizzes Completed</div>
+                            </div>
+                            <div class="report-card">
+                                <div class="report-card-icon"><i class="fas fa-brain"></i></div>
+                                <div class="report-card-value">${data.learning_style || 'N/A'}</div>
+                                <div class="report-card-label">Learning Style</div>
+                            </div>
+                            <div class="report-card">
+                                <div class="report-card-icon"><i class="fas fa-chart-line"></i></div>
+                                <div class="report-card-value">${data.subject_progress?.overall || 0}%</div>
+                                <div class="report-card-label">Overall Progress</div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Add VARK scores if available
+                    if (data.vark_scores) {
+                        reportHTML += `
+                            <div class="vark-scores">
+                                <h4>Learning Style Profile</h4>
+                                <div class="vark-bars">
+                                    <div class="vark-bar-item">
+                                        <div class="vark-bar-label">Visual</div>
+                                        <div class="vark-bar-container">
+                                            <div class="vark-bar visual" style="width: ${Math.min(data.vark_scores.V * 10, 100)}%"></div>
+                                        </div>
+                                        <div class="vark-bar-value">${data.vark_scores.V}</div>
+                                    </div>
+                                    <div class="vark-bar-item">
+                                        <div class="vark-bar-label">Auditory</div>
+                                        <div class="vark-bar-container">
+                                            <div class="vark-bar auditory" style="width: ${Math.min(data.vark_scores.A * 10, 100)}%"></div>
+                                        </div>
+                                        <div class="vark-bar-value">${data.vark_scores.A}</div>
+                                    </div>
+                                    <div class="vark-bar-item">
+                                        <div class="vark-bar-label">Reading</div>
+                                        <div class="vark-bar-container">
+                                            <div class="vark-bar reading" style="width: ${Math.min(data.vark_scores.R * 10, 100)}%"></div>
+                                        </div>
+                                        <div class="vark-bar-value">${data.vark_scores.R}</div>
+                                    </div>
+                                    <div class="vark-bar-item">
+                                        <div class="vark-bar-label">Kinesthetic</div>
+                                        <div class="vark-bar-container">
+                                            <div class="vark-bar kinesthetic" style="width: ${Math.min(data.vark_scores.K * 10, 100)}%"></div>
+                                        </div>
+                                        <div class="vark-bar-value">${data.vark_scores.K}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    // Add subject progress
+                    reportHTML += `
+                        <h4>Subject Performance</h4>
+                        <div class="subject-performance">
+                    `;
+
+                    // Add progress bars for each subject
+                    const subjects = Object.keys(data.subject_progress).filter(s => s !== 'overall');
+                    subjects.forEach(subject => {
+                        const progress = data.subject_progress[subject] || 0;
+                        const barClass = progress < 30 ? "low" : progress < 70 ? "medium" : "high";
+
+                        reportHTML += `
+                            <div class="subject-item">
+                                <span class="subject-name">${subject.charAt(0).toUpperCase() + subject.slice(1)}</span>
+                                <div class="progress-bar">
+                                    <div class="progress ${barClass}" style="width: ${progress}%"></div>
+                                </div>
+                                <span class="subject-value">${progress}%</span>
+                            </div>
+                        `;
+                    });
+
+                    reportHTML += `</div>`;
+
+                    // Add recent activities
+                    if (data.recent_activities && data.recent_activities.length > 0) {
+                        reportHTML += `
+                            <h4>Recent Activities</h4>
+                            <div class="activities-list">
+                        `;
+
+                        data.recent_activities.forEach(activity => {
+                            reportHTML += `
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <i class="fas fa-${activity.type === 'quiz' ? 'puzzle-piece' : 'book'}"></i>
+                                    </div>
+                                    <div class="activity-details">
+                                        <div class="activity-title">${activity.details}</div>
+                                        <div class="activity-meta">
+                                            ${formatDate(activity.timestamp)} 
+                                            ${activity.score !== undefined ? `| Score: ${activity.score}` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+
+                        reportHTML += `</div>`;
+                    }
+
+                    // Add action buttons
+                    reportHTML += `
+                        <div class="report-actions">
+                            <button class="action-btn" onclick="printReport('${data.student_name}')">
+                                <i class="fas fa-print"></i> Print Report
+                            </button>
+                            <button class="action-btn" onclick="exportReport('${data.student_id}')">
+                                <i class="fas fa-download"></i> Export Data
+                            </button>
+                        </div>
+                    `;
+
+                    document.getElementById('reportContent').innerHTML = reportHTML;
+                })
+                .catch(error => {
+                    console.error('Error fetching student report:', error);
+                    document.getElementById('reportContent').innerHTML =
+                        '<p class="error-message">Failed to load student report. Please try again later.</p>';
+                });
+        }
+
+        function printReport(studentName) {
+            // Create a printable version
+            const content = document.getElementById('reportContent').innerHTML;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Progress Report - ${studentName}</title>
+                    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+                    <style>
+                        body { padding: 20px; font-family: Arial, sans-serif; }
+                        .report-header { margin-bottom: 20px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="report-print-header">
+                        <h2>Student Progress Report - ${studentName}</h2>
+                        <p>Generated on ${new Date().toLocaleDateString()}</p>
+                    </div>
+                    ${content}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            // Delay printing to allow images/styles to load
+            setTimeout(() => {
+                printWindow.print();
+            }, 500);
+        }
+
+        function exportReport(studentId) {
+            // Download report data as JSON
+            fetch(`/api/student/${studentId}/progress`)
+                .then(response => response.json())
+                .then(data => {
+                    const dataStr = JSON.stringify(data, null, 2);
+                    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+                    const exportFileDefaultName = `student_progress_${studentId}.json`;
+
+                    const linkElement = document.createElement('a');
+                    linkElement.setAttribute('href', dataUri);
+                    linkElement.setAttribute('download', exportFileDefaultName);
+                    linkElement.click();
+                });
+        }
+    </script>
+
+    <!-- Add CSS for reports to the head section -->
+    <style>
+        .report-container {
+            margin-top: 20px;
+        }
+
+        .report-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .report-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .report-header {
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .report-meta {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .report-overview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .report-card {
+            flex: 1;
+            min-width: 150px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .report-card-icon {
+            font-size: 1.8rem;
+            color: #4e73df;
+            margin-bottom: 10px;
+        }
+
+        .report-card-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .report-card-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .vark-scores {
+            background: #f5f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .vark-bars {
+            margin-top: 15px;
+        }
+
+        .vark-bar-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .vark-bar-label {
+            width: 100px;
+            font-weight: 600;
+        }
+
+        .vark-bar-container {
+            flex: 1;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .vark-bar {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .vark-bar.visual {
+            background-color: #4e73df;
+        }
+
+        .vark-bar.auditory {
+            background-color: #1cc88a;
+        }
+
+        .vark-bar.reading {
+            background-color: #f6c23e;
+        }
+
+        .vark-bar.kinesthetic {
+            background-color: #e74a3b;
+        }
+
+        .vark-bar-value {
+            width: 40px;
+            text-align: right;
+            margin-left: 10px;
+            font-weight: 600;
+        }
+
+        .subject-performance {
+            margin-bottom: 25px;
+        }
+
+        .subject-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .subject-name {
+            width: 120px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 16px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+        }
+
+        .progress.low {
+            background-color: #e74a3b;
+        }
+
+        .progress.medium {
+            background-color: #f6c23e;
+        }
+
+        .progress.high {
+            background-color: #1cc88a;
+        }
+
+        .subject-value {
+            width: 50px;
+            text-align: right;
+            margin-left: 10px;
+        }
+
+        .activities-list {
+            margin-bottom: 25px;
+        }
+
+        .activity-item {
+            display: flex;
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: #f8f9fc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4e73df;
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .activity-meta {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            background: #4e73df;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            background: #2e59d9;
+        }
+    </style>
+
+    <!-- Dashboard Overview Styles -->
+    <style>
+        .welcome-banner {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(110, 142, 251, 0.3);
+        }
+
+        .welcome-content h2 {
+            margin-top: 0;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-content p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .teacher-profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-icon {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .profile-details p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            background: #f8f9fc;
+            border-bottom: 1px solid #edf2f9;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #4e73df;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header h3 i {
+            margin-right: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Stats styles */
+        .stat-item {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #4e73df;
+        }
+
+        .stat-label {
+            color: #858796;
+            font-size: 14px;
+        }
+
+        .stat-chart {
+            margin: 15px 0;
+        }
+
+        .stat-chart-bar {
+            height: 20px;
+            background: #eaedf7;
+            border-radius: 10px;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .chart-segment {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        .chart-segment.visual {
+            background-color: #4e73df;
+        }
+
+        .chart-segment.auditory {
+            background-color: #1cc88a;
+        }
+
+        .chart-segment.reading {
+            background-color: #f6c23e;
+        }
+
+        .chart-segment.kinesthetic {
+            background-color: #e74a3b;
+        }
+
+        .chart-segment.empty {
+            background-color: #d1d3e2;
+        }
+
+        .stat-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            font-size: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+
+        .legend-color.visual {
+            background-color: #4e73df;
+        }
+
+        .legend-color.auditory {
+            background-color: #1cc88a;
+        }
+
+        .legend-color.reading {
+            background-color: #f6c23e;
+        }
+
+        .legend-color.kinesthetic {
+            background-color: #e74a3b;
+        }
+
+        /* Quick actions styles */
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .quick-action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fc;
+            border: 1px solid #edf2f9;
+            border-radius: 8px;
+            padding: 15px;
+            text-decoration: none;
+            color: #5a5c69;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .quick-action-btn:hover {
+            background: #4e73df;
+            color: white;
+        }
+
+        .quick-action-btn i {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .quick-action-form {
+            margin: 0;
+        }
+
+        .quick-action-form button {
+            width: 100%;
+            border: none;
+            background: none;
+            font-family: inherit;
+            font-size: inherit;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        /* Activity timeline styles */
+        .activity-timeline {
+            position: relative;
+        }
+
+        .activity-timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 15px;
+            width: 2px;
+            background: #edf2f9;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            padding-bottom: 20px;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-icon {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #4e73df;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+
+        .timeline-icon.success {
+            background: #1cc88a;
+        }
+
+        .timeline-icon.info {
+            background: #36b9cc;
+        }
+
+        .timeline-icon.warning {
+            background: #f6c23e;
+        }
+
+        .timeline-icon.danger {
+            background: #e74a3b;
+        }
+
+        .timeline-content h4 {
+            margin: 0 0 5px;
+            font-size: 16px;
+        }
+
+        .timeline-content p {
+            margin: 0;
+            color: #858796;
+            font-size: 14px;
+        }
+
+        .timeline-date {
+            display: block;
+            font-size: 12px;
+            color: #b7b9cc;
+            margin-top: 5px;
+        }
+
+        /* Teaching resources styles */
+        .resources-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .resource-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fc;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #5a5c69;
+            transition: all 0.2s;
+        }
+
+        .resource-item:hover {
+            background: #edf2f9;
+            transform: translateX(5px);
+        }
+
+        .resource-item i {
+            margin-right: 12px;
+            color: #4e73df;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .welcome-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .teacher-profile {
+                margin-top: 20px;
+            }
+
+            .quick-actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</body>
+
+</html>

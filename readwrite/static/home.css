@@ -1,0 +1,141 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+  /* Background Image */
+  body {
+    background-color: #f2eff2;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: Arial, sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+}
+
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    font-family: serif;
+}
+
+
+.dashboard-container {
+    font-size: 34px;
+    text-align: center;
+    padding: 40px;
+    margin-left: 330px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #f8f5f7;
+    max-width: 900px;
+    width: 100%;
+}
+
+.card-title2 {
+    margin-bottom: 20px;
+    font-size: 27px;
+    color: #524cbf;
+    font-family: serif;
+    padding-top: 20px;
+   
+}
+.card-title {
+    margin-bottom: 20px;
+    font-size: 38px;
+    color: #0a0745;
+    font-family: serif;
+    margin-bottom: 10px;
+    padding-bottom: 20px;
+    font-weight: bold;
+}
+.card-text {
+    font-size: 25px;
+    color: #03021a;
+    font-weight: bold;
+
+}
+
+.learning-methods {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.learning-btn1 {
+    padding: 15px 20px;
+    font-size: 22px;
+    text-decoration: none;
+    color: #fff;
+    border-radius: 8px;
+    text-align: center;
+    width: 400px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+/* Shine effect for all buttons */
+.learning-btn1::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 150%;
+    height: 150%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(45deg);
+    animation: shine 4s infinite;
+}
+
+@keyframes shine {
+    0% {
+        transform: translateX(-100%) rotate(45deg);
+    }
+    100% {
+        transform: translateX(100%) rotate(45deg);
+    }
+}
+
+/* Hover effect */
+.learning-btn1:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+
+
+/* Reading/Writing - Ocean Blues gradient */
+.reading-writing {
+    background: linear-gradient(45deg, #5d4aa8, #21139d);
+}
+.reading-writing:hover {
+    background: linear-gradient(45deg, #3b1da9, #6375ed);
+}
+
+
+/* Optional: Add pulse animation on hover */
+@keyframes pulse {
+    0% {
+        transform: scale(1) translateY(-3px);
+    }
+    50% {
+        transform: scale(1.02) translateY(-3px);
+    }
+    100% {
+        transform: scale(1) translateY(-3px);
+    }
+}
+
+.learning-btn1:hover {
+    animation: pulse 2s infinite;
+}

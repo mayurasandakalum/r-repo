@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Reading and Writing Learning</title>
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <style>
+        /* General Styles */
+        body {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background: linear-gradient(135deg,rgb(197, 179, 255),rgb(250, 137, 254),rgb(253, 150, 202));
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Chatbox */
+        .chat-container {
+            width: 90%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease-in-out;
+            margin:20px;
+        }
+
+        .lesson-level-container {
+            font-size: 16px;
+            font-weight: 100;
+            color:rgb(10, 1, 10);
+            padding-bottom: 5px;
+    
+        }
+
+        .question-area {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            padding: 50px;
+            border-radius: 10px; /* Rounded corners for a smoother look */
+            border: 2px solid rgb(139, 106, 133); /* Green border for a clean look */
+            background:rgb(247, 245, 247); /* Light background to make the text stand out */
+            box-shadow: 0 30px 30px rgba(6, 6, 6, 0.1); /* Soft shadow for depth */
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease; /* Smooth transitions */
+            margin-bottom:30px;
+        }
+        
+
+        /* Drawing Canvas */
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            /* Let the canvas fill its container width, 
+               but do NOT set fixed height or width on the canvas 
+               directly via CSS */
+        }
+
+        canvas {
+            display: block; /* Removes inline offsets */
+            width: 100%;    /* The width is responsive to container */
+            /* height: 100%;  <-- Avoid forcing a height here */
+            background-color: #fff; /* For clarity when drawing */
+            border: 2px solid #ccc;
+            border-radius: 10px;
+        }
+
+        .controlsbtn {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            gap: 15px; /* Adds spacing between buttons */
+        }
+        
+        .controlsbtn button {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width:300px;
+            border: 2px solid transparent;
+            border-radius: 6px; /* Slightly rounded for a modern look */
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* Adds depth */
+        }
+        
+        /* --- Button Colors --- */
+        .clear-btn {
+            border: 2px solid rgb(83, 1, 11);
+            background-color:rgb(194, 22, 36);
+            color: white;
+        }
+        
+        .submit-btn {
+            background-color:rgb(7, 90, 179);
+            color: white;
+        }
+        
+        .next-btn {
+            background-color:rgb(16, 154, 48);
+            color: white;
+        }
+        
+        /* --- Hover Effects --- */
+        .clear-btn:hover {
+            background-color:rgb(215, 83, 96);
+            border-color:rgb(236, 75, 91);
+        }
+        
+        .submit-btn:hover {
+            background-color:rgb(54, 116, 182);
+            border-color:rgb(118, 161, 208);
+        }
+        
+        .next-btn:hover {
+            background-color:rgb(27, 170, 58);
+            border-color:rgb(34, 189, 70);
+        }
+        
+        /* --- Click (Active) Effects --- */
+        .clear-btn:active,
+        .submit-btn:active,
+        .next-btn:active {
+            transform: scale(0.95); /* Adds a click effect */
+        }
+        
+        /* --- Responsive Design --- */
+        @media (max-width: 600px) {
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+       
+
+       .title1 {
+            font-size: 35px;
+            font-weight: bold;
+            font-family: 'Lucida Sans', sans-serif;
+            color: #333;
+            padding-left:570px;   
+            padding-top: 30px         
+        }
+
+        .radio-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px; /* Adds spacing between options */
+            margin: 15px 0;
+        }
+        
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Spacing between radio button and text */
+            font-size: 16px;
+            width: 150px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background-color:rgb(238, 233, 237); /* Light background */
+            border: 2px solid #ddd; /* Subtle border */
+            transition: all 0.3s ease;
+        }
+        
+        .radio-group input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 18px;
+            border: 2px solid rgb(128, 1, 90); /* Green border */
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .radio-group input[type="radio"]:checked {
+            background-color:rgb(78, 27, 76);
+            border-color:rgb(85, 6, 48);
+        }
+        
+        .radio-group input[type="radio"]:checked::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .radio-group label:hover {
+            background-color:rgb(227, 223, 227); /* Light green on hover */
+            border-color:rgb(202, 185, 200);
+        }
+        
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    {% include 'base.html' %}
+     
+    <div class="title1">කියවා ලිවීමේ ඉගෙනීම</div>
+      
+    
+
+    <div class="wrapper">
+        <!-- Chatbox -->
+        <div class="chat-container">
+            <div class="lesson-level-container">
+                <p><strong>පාඩම:</strong> <span id="lesson">{{ question['Lesson'] }}</span></p>
+                <p><strong>මට්ටම:</strong> <span id="level">{{ question['Level'] }}</span></p>
+            </div>
+
+            <div class="question-area">
+                <span data-question-id="{{ question['ID'] }}">{{ question['Question'] }}</span>
+                <div class="image-area">
+                    {% if image %}
+                    <img src="{{ url_for('static', filename=image) }}" alt="Related Image" style="height:100px;width:100px;" />
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="radio-group">
+                <label><input type="radio" name="inputType" value="number" checked>ඉලක්කමින්</label>
+                <label><input type="radio" name="inputType" value="text">අකුරින්</label>
+            </div>
+
+
+            <!-- Controls -->
+            <div class="controlsbtn">
+                <button id="clearBtn" class="clear-btn">ඉවත් කරන්න</button>
+                <button id="submitBtn" class="submit-btn">පිළිතුර තහවුරු කරන්න</button>
+                <button id="next" class="next-btn">ඊළඟ ප්‍රශ්නය</button>
+            </div>
+
+            
+        </div>
+
+                    <!-- Drawing Area -->
+                    <div class="canvas-container">
+                        <canvas id="answerCanvas"></canvas>
+                    </div>
+
+    
+
+    </div>
+
+  
+
+    <script>
+        const canvas = document.getElementById('answerCanvas');
+        let signaturePad;
+        
+        // resizes the canvas when the screen size changes to make the whiteboard responsive
+        function resizeCanvas() {
+            const ratio = 1;
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext('2d').scale(ratio, ratio);
+            
+            if (signaturePad) {
+                signaturePad.clear();
+            }
+        }
+    
+        //SignaturePad is initialized, allowing students to write answers 
+        document.addEventListener('DOMContentLoaded', () => {
+            resizeCanvas();
+    
+            signaturePad = new SignaturePad(canvas, {
+                minWidth: 1,
+                maxWidth: 2.5,
+                backgroundColor: "rgb(255, 255, 255)",
+                penColor: "rgb(0, 0, 0)",
+            });
+    
+            window.addEventListener('resize', resizeCanvas);
+    
+            //Identify Input Type (Sinhala or Numbers)
+            function getSelectedInputType() {
+                return document.querySelector('input[name="inputType"]:checked').value === "number";
+            }
+    
+            // Clear button
+            document.getElementById('clearBtn').addEventListener('click', () => {
+                signaturePad.clear();
+            });
+    
+            // Submit button with improved pop-up
+            document.getElementById('submitBtn').addEventListener('click', () => {
+                if (signaturePad.isEmpty()) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'අවවාදයයි!',
+                        text: 'කරුණාකර පළමුව ප්‍රතිචාරයක් ලබාදෙන්න.',
+                        confirmButtonText: 'හරි',
+                    });
+                    return;
+                }
+    
+                //Converts the handwritten answer to an image format (PNG).
+                const dataURL = signaturePad.toDataURL("image/png");
+    
+                fetch("/submit_write", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    //Sends the handwritten image and input type (Sinhala or Number) to the backend
+                    body: JSON.stringify({ image: dataURL, number: getSelectedInputType() }),
+                })
+                //f the answer is correct or wrong, the backend returns a JSON response.
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        if (data.correct) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'නිවැරදියි!',
+                                text: 'ඔබගේ පිළිතුර නිවැරදියි.',
+                                confirmButtonText: 'හරි',
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'වැරදියි!',
+                                html: `ඔබගේ පිළිතුර වැරදියි.<br> නිවැරදි පිළිතුර: <b>${data.answer}</b>`,
+                                confirmButtonText: 'නැවත උත්සාහ කරන්න',
+                            });
+                        }
+                    } else {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'දෝශයකි!',
+                            text: data.message || 'ප්‍රශ්න අවසානයට පැමිණියෙමු.',
+                            confirmButtonText: 'හරි',
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'දෝශයකි!',
+                        text: 'දෝශයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.',
+                        confirmButtonText: 'හරි',
+                    });
+                });
+            });
+    
+            // Next button with improved pop-up
+            document.getElementById('next').addEventListener('click', () => {
+                fetch('/next_question_rw')
+                    .then(response => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            const questionData = data.question;
+                            document.querySelector('.question-area span').textContent = questionData.Question;
+                            document.getElementById('lesson').textContent = questionData.Lesson;
+                            document.getElementById('level').textContent = questionData.Level;
+    
+                            const imageArea = document.querySelector('.image-area');
+                            if (data.Image) {
+                                imageArea.innerHTML = `<img src="${data.Image}" alt="Related Image" />`;
+                            } else {
+                                imageArea.innerHTML = '';
+                            }
+    
+                            signaturePad.clear();
+                        } else {
+                            if (!data.question) {
+                                window.location.href = "{{ url_for('write_guide') }}";
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'දෝශයකි!',
+                                    text: data.message || 'ප්‍රශ්නය ලබා ගැනීමට දෝශයකි.',
+                                    confirmButtonText: 'හරි',
+                                });
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'දෝශයකි!',
+                            text: 'ප්‍රශ්නය ලබා ගැනීමට නොහැක. නැවත උත්සාහ කරන්න.',
+                            confirmButtonText: 'හරි',
+                        });
+                    });
+            });
+        });
+    </script>
+    
+</body>
+</html>

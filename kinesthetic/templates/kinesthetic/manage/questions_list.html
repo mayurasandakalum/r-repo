@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold"><i class="bi bi-list-check me-2"></i>Question Bank</h2>
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <i class="bi bi-plus-lg me-2"></i>New Question
+            </button>
+            <ul class="dropdown-menu">
+                {% for code, name in subjects %}
+                <li><a class="dropdown-item" href="{{ url_for('kinesthetic.new_question', subject=code) }}">{{ name
+                        }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Subject Tabs -->
+    <ul class="nav nav-tabs mb-4" id="subjectTabs" role="tablist">
+        {% for code, name in subjects %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{ code }}" data-bs-toggle="tab"
+                data-bs-target="#{{ code }}" type="button" role="tab">
+                {{ name }}
+            </button>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        {% for code, name in subjects %}
+        <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="{{ code }}" role="tabpanel">
+
+            {% set questions = questions_by_subject.get(code, []) %}
+            {% if questions %}
+            {% for question in questions %}
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-header bg-light py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">
+                                <span class="badge bg-secondary me-2">Question {{ questions|length - loop.index0
+                                    }}</span>
+                                <span
+                                    class="badge {% if question.is_published %}bg-success{% else %}bg-warning{% endif %} me-2">
+                                    {{ "Published" if question.is_published else "Draft" }}
+                                </span>
+                                <span class="badge bg-info">{{ question.answer_method }}</span>
+                            </h6>
+                        </div>
+                        <div class="btn-group">
+                            <a href="{{ url_for('kinesthetic.edit_question', question_id=question.id) }}"
+                                class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-pencil me-1"></i>Edit
+                            </a>
+                            <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#deleteQuestionModal{{ question.id }}">
+                                <i class="bi bi-trash me-1"></i>Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">{{ question.text | safe }}</div>
+
+                    <div class="sub-questions">
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-list-nested me-2"></i>Sub-questions ({{ question.sub_questions|length }})
+                        </h6>
+
+                        <div class="list-group">
+                            {% for sub in question.sub_questions %}
+                            <div class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ sub.text }}</h6>
+                                        <small class="text-muted">
+                                            <i class="bi bi-tag me-1"></i>{{ sub.answer_type }} |
+                                            <i class="bi bi-star-fill me-1 text-warning"></i>{{ sub.points }} points
+                                        </small>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a href="{{ url_for('kinesthetic.edit_subquestion', subquestion_id=sub.id) }}"
+                                            class="btn btn-outline-secondary btn-sm">
+                                            <i class="bi bi-pencil me-1"></i>Edit
+                                        </a>
+                                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                            data-bs-toggle="modal" data-bs-target="#deleteSubQuestionModal{{ sub.id }}">
+                                            <i class="bi bi-trash me-1"></i>Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Delete Sub-Question Modal -->
+                            <div class="modal fade" id="deleteSubQuestionModal{{ sub.id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Delete Sub-question</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete this sub-question?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form
+                                                action="{{ url_for('kinesthetic.delete_subquestion', subquestion_id=sub.id) }}"
+                                                method="POST">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mt-3">
+                            <a href="{{ url_for('kinesthetic.new_subquestion', question_id=question.id) }}"
+                                class="btn btn-success btn-sm">
+                                <i class="bi bi-plus-lg me-1"></i>Add Sub-question
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Question Modal -->
+            <div class="modal fade" id="deleteQuestionModal{{ question.id }}" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Delete Question</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to delete this question? This will also delete all its
+                                sub-questions.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <form action="{{ url_for('kinesthetic.delete_question', question_id=question.id) }}"
+                                method="POST">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-inbox display-4 text-muted"></i>
+                <p class="mt-2">No questions in {{ name }} yet</p>
+                <a href="{{ url_for('kinesthetic.new_question') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-lg me-2"></i>Add Question
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    // Add dynamic answer method updates based on subject selection
+    document.addEventListener('DOMContentLoaded', function () {
+        const subjectSelect = document.querySelector('[name="subject"]');
+        const answerMethodSelect = document.querySelector('[name="answer_method"]');
+
+        if (subjectSelect && answerMethodSelect) {
+            subjectSelect.addEventListener('change', function () {
+                fetch(`/api/answer-methods/${this.value}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        answerMethodSelect.innerHTML = data.methods.map(([value, label]) =>
+                            `<option value="${value}">${label}</option>`
+                        ).join('');
+                    });
+            });
+        }
+    });
+</script>
+{% endblock %}

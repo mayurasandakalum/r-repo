@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Let's Quiz | All Lessons Completed{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="jumbotron text-center">
+        <h1 class="display-4">සුබයි! 🎉</h1>
+        <p class="lead">ඔබ සියලුම පාඩම් සාර්ථකව සම්පූර්ණ කර ඇත.</p>
+        <hr class="my-4">
+        <p>ඔබේ ප්‍රගතිය බැලීමට ප්‍රතිඵල පුවරුව පරීක්ෂා කරන්න.</p>
+        <a class="btn btn-primary btn-lg" href="{{ url_for('quiz.leaderboard') }}" role="button">
+            ප්‍රතිඵල බලන්න
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,94 @@
+Statistical Analysis Report
+=========================
+
+1. Basic Statistics
+-----------------
+
+V Modality:
+Mean: 76.50
+Median: 76.00
+Std Dev: 11.70
+Min: 45.00
+Max: 99.00
+
+A Modality:
+Mean: 75.62
+Median: 74.50
+Std Dev: 12.06
+Min: 45.00
+Max: 99.00
+
+R Modality:
+Mean: 74.74
+Median: 75.50
+Std Dev: 10.30
+Min: 45.00
+Max: 91.00
+
+K Modality:
+Mean: 75.34
+Median: 73.50
+Std Dev: 10.61
+Min: 45.00
+Max: 99.00
+
+2. Normality Tests (Shapiro-Wilk)
+--------------------------------
+
+V Modality:
+Statistic: 0.9717
+P-value: 0.2700
+Normal distribution? True
+
+A Modality:
+Statistic: 0.9635
+P-value: 0.1249
+Normal distribution? True
+
+R Modality:
+Statistic: 0.9640
+P-value: 0.1304
+Normal distribution? True
+
+K Modality:
+Statistic: 0.9795
+P-value: 0.5300
+Normal distribution? True
+
+3. Correlation Analysis
+----------------------
+
+A-V Correlation: -0.4104
+
+A-R Correlation: -0.3576
+
+A-K Correlation: 0.2864
+
+R-V Correlation: 0.2948
+
+K-V Correlation: -0.0739
+
+K-R Correlation: -0.4651
+
+4. Threshold Analysis
+-------------------
+
+V Modality:
+Threshold: 85.86
+% Above Threshold: 28.0%
+Z-score of threshold: 0.80
+
+A Modality:
+Threshold: 85.27
+% Above Threshold: 28.0%
+Z-score of threshold: 0.80
+
+R Modality:
+Threshold: 82.98
+% Above Threshold: 26.0%
+Z-score of threshold: 0.80
+
+K Modality:
+Threshold: 83.83
+% Above Threshold: 26.0%
+Z-score of threshold: 0.80

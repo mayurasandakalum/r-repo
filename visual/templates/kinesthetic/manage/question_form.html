@@ -1,0 +1,408 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('kinesthetic.manage_questions') }}">Question Bank</a></li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Main Form Column -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h3 class="card-title mb-4">{{ title }}</h3>
+                    <form method="POST" id="questionForm">
+                        {{ form.hidden_tag() }}
+
+                        <!-- Question Details -->
+                        <div class="card bg-light border-0 mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">
+                                    <i class="bi bi-pencil-square me-2"></i>Question Details
+                                </h5>
+                                <div class="mb-4">
+                                    {{ form.text.label(class="form-label fw-bold") }}
+                                    <div class="form-text mb-2">Enter the main question text. HTML formatting is
+                                        supported.</div>
+                                    {{ form.text(class="form-control", rows=5) }}
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        {{ form.subject.label(class="form-label fw-bold") }}
+                                        <div class="form-text mb-2">Select the subject for this question.</div>
+                                        {{ form.subject(class="form-select") }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        {{ form.answer_method.label(class="form-label fw-bold") }}
+                                        <div class="form-text mb-2">Select how students will answer this question.</div>
+                                        {{ form.answer_method(class="form-select") }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Status</label>
+                                        <div class="form-text mb-2">Control whether this question is visible to
+                                            students.</div>
+                                        <div class="form-check form-switch mt-2">
+                                            {{ form.is_published(class="form-check-input") }}
+                                            {{ form.is_published.label(class="form-check-label") }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sub Questions Section -->
+                        <div class="card bg-light border-0 mb-4">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="card-title mb-0">
+                                        <i class="bi bi-list-nested me-2"></i>Sub-questions
+                                    </h5>
+                                    <button type="button" class="btn btn-success btn-sm" id="addSubQuestion">
+                                        <i class="bi bi-plus-lg me-1"></i>Add Sub-question
+                                    </button>
+                                </div>
+
+                                <div id="subQuestionsContainer">
+                                    {% for subform in form.sub_questions %}
+                                    <div class="sub-question-form mb-4 border rounded p-4 position-relative bg-white">
+                                        <button type="button"
+                                            class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 remove-subquestion">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+
+                                        <div class="mb-3">
+                                            {{ subform.text.label(class="form-label fw-bold") }}
+                                            {{ subform.text(class="form-control", rows=2) }}
+                                        </div>
+
+                                        <div class="mb-3">
+                                            {{ subform.instructions.label(class="form-label fw-bold") }}
+                                            {{ subform.instructions(class="form-control", rows=2) }}
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                {{ subform.correct_answer.label(class="form-label fw-bold") }}
+                                                {{ subform.correct_answer(class="form-control") }}
+                                            </div>
+                                            <div class="col-md-6">
+                                                {{ subform.answer_type.label(class="form-label fw-bold") }}
+                                                {{ subform.answer_type(class="form-select") }}
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                {{ subform.min_value.label(class="form-label") }}
+                                                {{ subform.min_value(class="form-control") }}
+                                            </div>
+                                            <div class="col-md-4">
+                                                {{ subform.max_value.label(class="form-label") }}
+                                                {{ subform.max_value(class="form-control") }}
+                                            </div>
+                                            <div class="col-md-4">
+                                                {{ subform.time_format.label(class="form-label") }}
+                                                {{ subform.time_format(class="form-control") }}
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                {{ subform.difficulty_level.label(class="form-label") }}
+                                                {{ subform.difficulty_level(class="form-control") }}
+                                            </div>
+                                            <div class="col-md-6">
+                                                {{ subform.points.label(class="form-label") }}
+                                                {{ subform.points(class="form-control") }}
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            {{ subform.hint.label(class="form-label fw-bold") }}
+                                            {{ subform.hint(class="form-control") }}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+                                {% if not form.sub_questions %}
+                                <div class="text-center py-4 text-muted" id="noSubQuestionsMessage">
+                                    <i class="bi bi-plus-circle display-4"></i>
+                                    <p class="mt-2">No sub-questions added yet. Click the button above to add one.</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex gap-2">
+                            {{ form.submit(class="btn btn-primary px-4") }}
+                            <a href="{{ url_for('kinesthetic.manage_questions') }}"
+                                class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Tips Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title"><i class="bi bi-info-circle me-2"></i>Tips</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-check-lg text-success me-2"></i>Use clear and descriptive
+                            titles</li>
+                        <li class="mb-2"><i class="bi bi-check-lg text-success me-2"></i>Add multiple sub-questions for
+                            complexity</li>
+                        <li class="mb-2"><i class="bi bi-check-lg text-success me-2"></i>Preview HTML content before
+                            saving</li>
+                        <li class="mb-2"><i class="bi bi-check-lg text-success me-2"></i>Set appropriate answer methods
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Answer Methods Card -->
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h5 class="card-title"><i class="bi bi-gear me-2"></i>Answer Methods</h5>
+                    <div class="mb-3">
+                        <h6 class="text-primary">Abacus</h6>
+                        <p class="small text-muted">Students will use virtual abacus to calculate answers.</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="text-primary">Analog Clock</h6>
+                        <p class="small text-muted">Students will use analog clock interface to show time.</p>
+                    </div>
+                    <div>
+                        <h6 class="text-primary">Digital Clock</h6>
+                        <p class="small text-muted">Students will use digital clock interface to input time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<template id="subQuestionTemplate">
+    <div class="sub-question-form mb-4 border rounded p-4 position-relative">
+        <button type="button"
+            class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 remove-subquestion">
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+        <!-- Text -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Sub-Question Text</label>
+            <textarea name="sub_questions-{index}-text" class="form-control" rows="2" required></textarea>
+        </div>
+
+        <!-- Instructions -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Instructions</label>
+            <textarea name="sub_questions-{index}-instructions" class="form-control" rows="2"></textarea>
+        </div>
+
+        <!-- Answer Details -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Correct Answer</label>
+                <input type="text" name="sub_questions-{index}-correct_answer" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Answer Type</label>
+                <select name="sub_questions-{index}-answer_type" class="form-select" required>
+                    <option value="number">Number</option>
+                    <option value="time">Time</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Answer Constraints -->
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label">Minimum Value</label>
+                <input type="number" step="any" name="sub_questions-{index}-min_value" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Maximum Value</label>
+                <input type="number" step="any" name="sub_questions-{index}-max_value" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Time Format</label>
+                <input type="text" name="sub_questions-{index}-time_format" class="form-control">
+            </div>
+        </div>
+
+        <!-- Difficulty and Points -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Difficulty Level</label>
+                <input type="number" name="sub_questions-{index}-difficulty_level" class="form-control" value="1"
+                    min="1" max="5" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Points</label>
+                <input type="number" name="sub_questions-{index}-points" class="form-control" value="1" min="1"
+                    required>
+            </div>
+        </div>
+
+        <!-- Hint -->
+        <div>
+            <label class="form-label fw-bold">Hint</label>
+            <textarea name="sub_questions-{index}-hint" class="form-control"></textarea>
+        </div>
+    </div>
+</template>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const container = document.getElementById('subQuestionsContainer');
+        const addButton = document.getElementById('addSubQuestion');
+        const template = document.getElementById('subQuestionTemplate');
+
+        // Add new sub-question
+        addButton.addEventListener('click', function () {
+            const index = container.children.length;
+            // Get template content and replace index placeholders
+            const templateHtml = template.innerHTML.replace(/{index}/g, index);
+            // Create temporary container and set its HTML
+            const temp = document.createElement('div');
+            temp.innerHTML = templateHtml;
+            // Get the first child (our actual template content)
+            const newSubQuestion = temp.firstElementChild;
+            container.appendChild(newSubQuestion);
+        });
+
+        // Remove sub-question
+        container.addEventListener('click', function (e) {
+            if (e.target.closest('.remove-subquestion')) {
+                const subQuestion = e.target.closest('.sub-question-form');
+                if (container.children.length > 1) {
+                    subQuestion.remove();
+                    // Reindex remaining sub-questions
+                    Array.from(container.children).forEach((subQ, idx) => {
+                        subQ.querySelectorAll('[name]').forEach(input => {
+                            input.name = input.name.replace(/\d+/, idx);
+                        });
+                    });
+                }
+            }
+        });
+
+        // Add this to hide/show no sub-questions message
+        const noSubQuestionsMessage = document.getElementById('noSubQuestionsMessage');
+
+        const updateNoSubQuestionsMessage = () => {
+            if (noSubQuestionsMessage) {
+                noSubQuestionsMessage.style.display =
+                    container.children.length === 0 ? 'block' : 'none';
+            }
+        };
+
+        // Update on add/remove
+        const observer = new MutationObserver(updateNoSubQuestionsMessage);
+        observer.observe(container, { childList: true });
+
+        // Add subject change handler
+        const subjectSelect = document.querySelector('[name="subject"]');
+        const answerMethodSelect = document.querySelector('[name="answer_method"]');
+
+        if (subjectSelect && answerMethodSelect) {
+            // Function to update answer methods
+            const updateAnswerMethods = () => {
+                fetch(`/api/answer-methods/${subjectSelect.value}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        answerMethodSelect.innerHTML = data.methods
+                            .map(([value, label]) =>
+                                `<option value="${value}">${label}</option>`
+                            ).join('');
+                    });
+            };
+
+            // Update on change
+            subjectSelect.addEventListener('change', updateAnswerMethods);
+
+            // Update initially if subject is already selected
+            if (subjectSelect.value) {
+                updateAnswerMethods();
+            }
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const subjectSelect = document.querySelector('[name="subject"]');
+        const answerMethodSelect = document.querySelector('[name="answer_method"]');
+
+        if (subjectSelect && answerMethodSelect) {
+            const updateAnswerMethods = () => {
+                fetch(`/api/answer-methods/${subjectSelect.value}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Clear existing options
+                        answerMethodSelect.innerHTML = '';
+                        // Add new options from the API
+                        data.methods.forEach(([value, label]) => {
+                            const option = new Option(label, value);
+                            answerMethodSelect.add(option);
+                        });
+                        // Trigger change event to update any dependent fields
+                        answerMethodSelect.dispatchEvent(new Event('change'));
+                    })
+                    .catch(error => {
+                        console.error('Error fetching answer methods:', error);
+                    });
+            };
+
+            // Update answer methods when subject changes
+            subjectSelect.addEventListener('change', updateAnswerMethods);
+
+            // Initial update if subject is already selected
+            if (subjectSelect.value) {
+                updateAnswerMethods();
+            }
+        }
+    });
+</script>
+
+<style>
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+    }
+
+    .card {
+        transition: all 0.3s ease;
+    }
+
+    .sub-question-form {
+        transition: all 0.3s ease;
+    }
+
+    .sub-question-form:hover {
+        box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+    }
+
+    .form-switch .form-check-input:checked {
+        background-color: #198754;
+        border-color: #198754;
+    }
+</style>
+{% endblock %}

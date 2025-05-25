@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/play.css') }}" />
+
+{% if question is none %}
+<div class="quiz-container">
+    <div class="card">
+        <!-- Decorative sparkles -->
+        <div class="sparkle" style="top: 10%; left: 20%;"></div>
+        <div class="sparkle" style="top: 70%; left: 80%;"></div>
+        <div class="sparkle" style="top: 30%; left: 90%;"></div>
+        <div class="sparkle" style="top: 80%; left: 10%;"></div>
+
+        <div class="completion-container">
+            <h1 class="completion-title">ප්‍රශ්න නොමැත!</h1>
+            <p class="completion-desc">මෙම විෂය සඳහා ප්‍රශ්න සොයා ගත නොහැක.</p>
+            <a href="{{ url_for('kinesthetic.user_home') }}" class="btn btn-primary">
+                <i class="fa fa-home"></i>
+                මුල් පිටුවට යන්න
+            </a>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="quiz-container">
+    <div class="card">
+        <!-- Decorative sparkles -->
+        <div class="sparkle" style="top: 10%; left: 20%;"></div>
+        <div class="sparkle" style="top: 70%; left: 80%;"></div>
+        <div class="sparkle" style="top: 30%; left: 90%;"></div>
+        <div class="sparkle" style="top: 80%; left: 10%;"></div>
+
+        <!-- Progress indicator with modern style -->
+        <div class="progress-container">
+            <div class="progress-outer">
+                <div class="progress-inner" style="width: {{ ((5 - (remaining_questions or 5)) * 100 / 5) }}%">
+                    <div class="progress-shine"></div>
+                </div>
+            </div>
+            <div class="progress-text">{{ 5 - (remaining_questions or 5) }}/5 Questions</div>
+        </div>
+
+        <div class="alert">
+            <i class="fa fa-info-circle"></i>
+            <span class="alert-text">
+                <strong>ඔබේ දුර්වලම විෂයය:
+                    {% if subject == 'addition' %}<span class="badge badge-warning">එකතු කිරීම</span>
+                    {% elif subject == 'subtraction' %}<span class="badge badge-warning">අඩු කිරීම</span>
+                    {% elif subject == 'time' %}<span class="badge badge-warning">කාලය</span>
+                    {% else %}<span class="badge badge-warning">{{ subject }}</span>
+                    {% endif %}
+                </strong><br>
+                මෙම විෂයේ ප්‍රශ්න 5කින් සමන්විත විශේෂ ප්‍රශ්නාවලිය - තව ප්‍රශ්න {{ remaining_questions or 5 }} යි
+            </span>
+        </div>
+
+        <div class="question-content">
+            <!-- Main question with HTML content -->
+            <div class="main-question-text">
+                {{ question.text|safe }}
+            </div>
+
+            <!-- Single form for all sub-questions -->
+            <form method="POST" action="{{ url_for('kinesthetic.process_weakest_subject_quiz') }}"
+                class="all-answers-form" enctype="multipart/form-data" onsubmit="return submitAllAnswers(this, event)">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="question_pk" value="{{ question.id }}">
+                <input type="hidden" name="answer_method" value="{{ question.answer_method }}">
+                <input type="hidden" name="subject" value="{{ subject }}">
+                <!-- Add this hidden input to identify AJAX requests on the server -->
+                <input type="hidden" name="is_ajax" value="true">
+                <input type="hidden" name="quiz_type" value="weakest_subject">
+
+                <!-- Sub questions in accordion -->
+                <div class="sub-questions-container">
+                    {% for sub_q in question.sub_questions %}
+                    <div class="sub-question">
+                        <button type="button" class="sub-question-header" onclick="toggleSubQuestion({{ loop.index }})">
+                            <span class="sub-question-title">{{ sub_q.text }}</span>
+                            <div class="sub-question-badges">
+                                <span class="badge badge-primary">ලකුණු {{ sub_q.points }}</span>
+                                <span class="badge badge-secondary">මට්ටම {{ sub_q.difficulty_level }}</span>
+                            </div>
+                            <div class="completion-indicator" id="completionIndicator{{ loop.index }}">
+                                <i class="fa fa-circle-o"></i>
+                            </div>
+                        </button>
+
+                        <div id="subQuestion{{ loop.index }}" class="sub-question-content">
+                            <input type="hidden" name="sub_question_ids" value="{{ sub_q.id }}">
+
+                            <!-- Instructions -->
+                            {% if sub_q.instructions %}
+                            <div class="alert alert-info">
+                                <i class="fa fa-info-circle"></i>
+                                <span class="alert-text">{{ sub_q.instructions }}</span>
+                            </div>
+                            {% endif %}
+
+                            <!-- Answer interface based on method -->
+                            <div class="answer-interface">
+                                <!-- Method-specific instructions with icons -->
+                                <h5 class="method-title">
+                                    {% if question.answer_method == 'abacus' %}
+                                    <i class="fa fa-calculator" style="color: #6366F1;"></i> ගණක රාමුව (ඇබකසය) පෙන්වන්න
+                                    {% elif question.answer_method == 'analog_clock' %}
+                                    <i class="fa fa-clock-o" style="color: #6366F1;"></i> අනලොග් ඔරලෝසුව පෙන්වන්න
+                                    {% else %}
+                                    <i class="fa fa-desktop" style="color: #6366F1;"></i> ඩිජිටල් ඔරලෝසුව පෙන්වන්න
+                                    {% endif %}
+                                </h5>
+
+                                <!-- Answer constraints -->
+                                {% if sub_q.answer_type == 'number' and sub_q.min_value and sub_q.max_value %}
+                                <!-- <p class="constraint-text">
+                                    <i class="fa fa-ruler" style="color: #6B7280; margin-right: 5px;"></i>
+                                    අගය {{ sub_q.min_value }} සහ {{ sub_q.max_value }} අතර විය යුතුය
+                                </p> -->
+                                {% endif %}
+                                {% if sub_q.answer_type == 'time' and sub_q.time_format %}
+                                <p class="constraint-text">
+                                    <i class="fa fa-hourglass-half" style="color: #6B7280; margin-right: 5px;"></i>
+                                    වේලාව {{ sub_q.time_format }} ආකෘතියට පෙන්වන්න
+                                </p>
+                                {% endif %}
+
+                                <!-- Webcam capture -->
+                                <div class="webcam-container">
+                                    <video id="webcam{{ loop.index }}" autoplay playsinline
+                                        class="webcam-video"></video>
+                                    <button type="button" class="btn btn-primary mt-3" id="openCamera{{ loop.index }}"
+                                        onclick="openCamera('webcam{{ loop.index }}', this)">
+                                        <i class="fa fa-video-camera"></i> කැමරාව විවෘත කරන්න
+                                    </button>
+                                    <select id="cameraSelect{{ loop.index }}" class="form-control mt-2"
+                                        style="display: none;" onchange="switchCamera(this, 'webcam{{ loop.index }}')">
+                                        <option value="">කැමරාව තෝරන්න...</option>
+                                    </select>
+                                    <!-- Mirror button for clock questions (initially hidden) -->
+                                    <button type="button" class="btn btn-secondary mt-2" id="mirror{{ loop.index }}"
+                                        onclick="toggleMirror({{ loop.index }})" style="display: none;"
+                                        data-mirrored="false">
+                                        <i class="fa fa-exchange"></i> පිංතූරය පෙරළන්න
+                                    </button>
+                                    <button type="button" class="btn btn-primary mt-3"
+                                        onclick="captureImage('webcam{{ loop.index }}', '{{ sub_q.id }}', {{ loop.index }})"
+                                        style="display: none;" id="capture{{ loop.index }}">
+                                        <i class="fa fa-camera"></i> පිංතූරය ගන්න
+                                    </button>
+                                </div>
+
+                                <!-- Hint section -->
+                                {% if sub_q.hint %}
+                                <div class="hint-section">
+                                    <button type="button" class="btn btn-hint" onclick="toggleHint({{ loop.index }})">
+                                        <i class="fa fa-lightbulb-o"></i>උදව්වක් ලබා ගන්න
+                                    </button>
+                                    <div id="hint{{ loop.index }}" class="hint-content" style="display: none;">
+                                        {{ sub_q.hint }}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Submit all answers button -->
+                <div class="submit-all-container">
+                    <p class="answer-status">
+                        <span id="capturedAnswersCount">0</span> / <span id="totalSubQuestions">{{
+                            question.sub_questions|length }}</span> අනු ප්‍රශ්න සඳහා පිළිතුරු සපයා ඇත
+                    </p>
+                    <button type="submit" class="btn btn-success submit-all-btn" id="submitAllBtn" disabled>
+                        <i class="fa fa-paper-plane"></i> සියලුම පිළිතුරු යවන්න
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+        <div class="spinner"></div>
+        <h3>ඔබගේ පිළිතුරු පරීක්ෂා කරමින්...</h3>
+        <p>අපි ඡායාරූප විශ්ලේෂණය කරමින් සිටිමු, කරුණාකර රැඳී සිටින්න.</p>
+    </div>
+</div>
+
+<!-- Result Modal for displaying results -->
+<div class="modal-overlay" id="resultModal">
+    <div class="result-modal" id="resultModalContainer">
+        <div class="bg-pattern"></div>
+        <div class="modal-header">
+            <div class="modal-icon" id="modalIcon">
+                <!-- Icon will be dynamically set by JavaScript -->
+            </div>
+            <h3 class="modal-title" id="modalTitle">නිවැරදියි!</h3>
+        </div>
+
+        <div class="modal-content">
+            <!-- Results summary -->
+            <div class="results-summary">
+                <div class="summary-heading">ඔබගේ ප්‍රතිඵල සාරාංශය:</div>
+                <div class="summary-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">නිවැරදි පිළිතුරු:</span>
+                        <span class="stat-value correct-count" id="correctAnswersCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">වැරදි පිළිතුරු:</span>
+                        <span class="stat-value wrong-count" id="wrongAnswersCount">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed results for each sub-question -->
+            <div class="detailed-results" id="detailedResults">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <button class="modal-btn" onclick="closeModalAndContinue()">
+            <span class="emoji">👍</span> මීළඟ ප්‍රශ්නය
+        </button>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/play.js') }}"></script>
+<script src="{{ url_for('static', filename='js/weakest_subject_quiz.js') }}"></script>
+{% endif %}
+{% endblock %}

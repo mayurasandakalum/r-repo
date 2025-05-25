@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>System Overview - විදුමග</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/system_overview.css') }}">
+    <!-- Include jQuery if needed by datepicker -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Meta tag for responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <!-- Background grid -->
+    <div class="grid-bg"></div>
+
+    <!-- Decorative elements -->
+    <div class="sketch-line top-left-sketch"></div>
+    <div class="sketch-line bottom-right-sketch"></div>
+    <div class="deco-item deco-plus">+</div>
+    <div class="deco-item deco-multiply">×</div>
+    <div class="deco-item deco-equals">=</div>
+    <div class="deco-item deco-divide">÷</div>
+    <div class="deco-item deco-number-5">5</div>
+    <div class="deco-item deco-star-1">★</div>
+
+    <div class="container">
+        <div class="header">
+            <h1>System Overview</h1>
+            <div>
+                {% if user_type == 'teacher' %}
+                <a href="/dashboard" class="auth-button">Dashboard</a>
+                {% elif user_type == 'student' %}
+                <a href="/student_dashboard" class="auth-button">Dashboard</a>
+                {% else %}
+                <!-- Show Home link if user is not logged in -->
+                <a href="/" class="auth-button">Home</a>
+                {% endif %}
+
+                {% if user_type %}
+                <!-- Only show logout if user is logged in -->
+                <a href="/logout" class="auth-button" style="background-color: #ef4444;">Logout</a>
+                {% else %}
+                <!-- Show login link if user is not logged in -->
+                <a href="/login" class="auth-button" style="background-color: #10b981;">Login</a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="system-container">
+            <section class="dashboard-section active">
+                <div class="system-header">
+                    <h2>System Overview</h2>
+                    <div class="system-health-indicator">
+                        <span class="health-status">System Health: </span>
+                        <div id="health-status-indicator" class="health-badge">
+                            Checking...
+                        </div>
+                        <div class="health-details">
+                            <div class="health-details-header">
+                                <strong>Health Details</strong>
+                                <span id="health-percentage">--%</span>
+                            </div>
+                            <div class="health-metrics">
+                                <div class="health-metric">
+                                    <span>Services Up:</span>
+                                    <div class="health-bar-container">
+                                        <div id="services-health-bar" class="health-bar" style="width: 0%"></div>
+                                    </div>
+                                    <span id="services-health-value" class="health-value">0/0</span>
+                                </div>
+                                <div class="health-metric">
+                                    <span>Refresh Time:</span>
+                                    <div id="last-update" style="text-align: right">Just Now</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-header">
+                        <h3><i class="fas fa-server"></i> Application Status</h3>
+                        <button id="refresh-status" class="refresh-button">
+                            <div class="icon-container">
+                                <i class="fas fa-sync-alt"></i>
+                                <i class="fas fa-check success-icon"></i>
+                            </div>
+                            <span>Refresh</span>
+                            <span id="loading-spinner" class="loading-spinner" style="display: none;"></span>
+                        </button>
+                    </div>
+                    <div id="status" class="status-content">
+                        <div class="status-loading">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metrics-dashboard">
+                    <!-- All metric cards, charts, and notifications have been removed -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Add interactive scripts -->
+    <script>
+        let systemHealth = "unknown";
+        let isRefreshing = false;
+        let lastUpdateTime = new Date();
+
+        // Convert string to Title Case
+        function toTitleCase(str) {
+            return str.replace(/\w\S*/g, function (txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+        }
+
+        // Properly capitalize all words in a string
+        function properTitleCase(str) {
+            // List of words that should remain lowercase in titles, unless they're the first word
+            const lowercase = ['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by', 'in', 'of'];
+
+            return str.toLowerCase().split(' ')
+                .map((word, index) => {
+                    if (index === 0 || !lowercase.includes(word)) {
+                        return word.charAt(0).toUpperCase() + word.substr(1);
+                    }
+                    return word;
+                })
+                .join(' ');
+        }
+
+        // Fetch and display app status
+        function updateStatus() {
+            if (isRefreshing) return;
+
+            const refreshBtn = document.getElementById('refresh-status');
+            const loadingSpinner = document.getElementById('loading-spinner');
+
+            isRefreshing = true;
+            refreshBtn.classList.add('refreshing');
+            loadingSpinner.style.display = 'inline-block';
+
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    let statusHtml = '<ul class="status-list">';
+                    let runningCount = 0;
+                    let totalServices = Object.keys(data).length;
+
+                    for (const [app, status] of Object.entries(data)) {
+                        const statusClass = status === 'running' ? 'status-running' : 'status-stopped';
+                        const statusIcon = status === 'running' ?
+                            '<i class="fas fa-check-circle"></i>' :
+                            '<i class="fas fa-exclamation-circle"></i>';
+
+                        // Convert app name and status to proper Title Case
+                        const appTitleCase = properTitleCase(app);
+                        const statusTitleCase = properTitleCase(status);
+
+                        if (status === 'running') runningCount++;
+
+                        statusHtml += `
+                            <li class="status-item animated-item">
+                                <span class="app-name">${appTitleCase}</span>
+                                <span class="${statusClass}">${statusIcon} ${statusTitleCase}</span>
+                            </li>
+                        `;
+                    }
+                    statusHtml += '</ul>';
+                    document.getElementById('status').innerHTML = statusHtml;
+
+                    // Update system health indicator
+                    const healthRatio = totalServices > 0 ? runningCount / totalServices : 0;
+                    updateHealthStatus(healthRatio);
+
+                    // Show success state on button
+                    refreshBtn.classList.remove('refreshing');
+                    refreshBtn.classList.add('success');
+                    loadingSpinner.style.display = 'none';
+
+                    // Reset button after 1.5 seconds
+                    setTimeout(() => {
+                        refreshBtn.classList.remove('success');
+                        isRefreshing = false;
+                    }, 1500);
+                })
+                .catch(error => {
+                    console.error('Error fetching status:', error);
+                    document.getElementById('status').innerHTML = '<div class="error-message"><i class="fas fa-exclamation-triangle"></i> Error Checking System Status</div>';
+                    updateHealthStatus(0);
+
+                    refreshBtn.classList.remove('refreshing');
+                    loadingSpinner.style.display = 'none';
+                    isRefreshing = false;
+                });
+        }
+
+        function updateHealthStatus(ratio) {
+            const healthIndicator = document.getElementById('health-status-indicator');
+            let healthClass, healthText;
+
+            if (ratio >= 0.9) {
+                healthClass = 'health-excellent';
+                healthText = 'Excellent';
+                systemHealth = "excellent";
+            } else if (ratio >= 0.7) {
+                healthClass = 'health-good';
+                healthText = 'Good';
+                systemHealth = "good";
+            } else if (ratio >= 0.5) {
+                healthClass = 'health-fair';
+                healthText = 'Fair';
+                systemHealth = "fair";
+            } else {
+                healthClass = 'health-poor';
+                healthText = 'Poor';
+                systemHealth = "poor";
+            }
+
+            // Remove all health classes and add the current one
+            healthIndicator.className = 'health-badge';
+            healthIndicator.classList.add(healthClass);
+            healthIndicator.innerHTML = healthText;
+
+            // Update the health details panel
+            const percentage = Math.round(ratio * 100);
+            document.getElementById('health-percentage').textContent = `${percentage}%`;
+
+            // Get services health info from the fetch response
+            const runningServices = Math.round(ratio * document.querySelectorAll('.status-item').length);
+            const totalServices = document.querySelectorAll('.status-item').length;
+
+            // Update the services health bar
+            document.getElementById('services-health-bar').style.width = `${percentage}%`;
+            document.getElementById('services-health-value').textContent = `${runningServices}/${totalServices}`;
+
+            // Update last refresh time
+            lastUpdateTime = new Date();
+            updateLastRefreshTime();
+
+            // Add animation to the health badge
+            healthIndicator.classList.remove('animated');
+            void healthIndicator.offsetWidth; // Trigger reflow
+            healthIndicator.classList.add('animated');
+        }
+
+        function updateLastRefreshTime() {
+            const lastUpdate = document.getElementById('last-update');
+            const now = new Date();
+            const diff = Math.floor((now - lastUpdateTime) / 1000); // difference in seconds
+
+            if (diff < 60) {
+                lastUpdate.textContent = `${diff} Seconds Ago`;
+            } else if (diff < 3600) {
+                const minutes = Math.floor(diff / 60);
+                lastUpdate.textContent = `${minutes} Minute${minutes > 1 ? 's' : ''} Ago`;
+            } else {
+                const hours = Math.floor(diff / 3600);
+                lastUpdate.textContent = `${hours} Hour${hours > 1 ? 's' : ''} Ago`;
+            }
+        }
+
+        // Check status on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initial status update
+            updateStatus();
+
+            const refreshButton = document.getElementById('refresh-status');
+
+            // Add ripple effect on click
+            refreshButton.addEventListener('click', function (e) {
+                // Don't do anything if currently refreshing
+                if (isRefreshing) return;
+
+                // Create ripple effect
+                const button = this;
+                const ripple = document.createElement('span');
+                const rect = button.getBoundingClientRect();
+
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                ripple.className = 'ripple';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+
+                button.appendChild(ripple);
+
+                // Remove ripple after animation completes
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+
+                // Start the refresh
+                updateStatus();
+            });
+
+            // Auto-refresh status every 1 seconds
+            setInterval(() => {
+                if (!isRefreshing) {
+                    updateStatus();
+                }
+            }, 1000);
+
+            // Update the "last updated" time every 1 seconds
+            setInterval(updateLastRefreshTime, 1000);
+        });
+    </script>
+</body>
+
+</html>

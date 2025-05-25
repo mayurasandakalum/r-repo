@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>{% block title %} {% endblock %}</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Rubik" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Sinhala Fonts - Nato Sans Sinhala -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@100..900&display=swap" rel="stylesheet">
+
+
+  <style>
+    body {
+      font-family: 'Noto Sans Sinhala', 'Rubik', sans-serif;
+      background-color: #f8f9fa;
+    }
+
+    .navbar {
+      border-radius: 0 0 15px 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%) !important;
+    }
+
+    .navbar-brand {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff !important;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-brand strong {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 5px 15px;
+      border-radius: 50px;
+      transition: all 0.3s;
+    }
+
+    .navbar-brand:hover strong {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
+
+    .btn {
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-info {
+      background-color: #17a2b8;
+      border-color: #17a2b8;
+      color: white;
+    }
+
+    .child-friendly-footer {
+      background-color: #f8f9fa;
+      border-top: 3px dashed #dee2e6;
+      padding: 1rem 0;
+      margin-top: 3rem;
+    }
+
+    .nav-item {
+      margin: 0 5px;
+    }
+  </style>
+  {% block css %} {% endblock css %}
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark">
+    <div class="container">
+      <h1 class="mb-0">
+        <a href="{{ url_for('write_guide') }}" class="navbar-brand">
+          <i class="bi bi-stars me-2"></i>
+          <strong>Math Learning Hub</strong>
+        </a>
+      </h1>
+      <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+        aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbar">
+        <ul class="navbar-nav align-items-center">
+
+          <li class="nav-item">
+            <a href="{{ url_for('write_guide') }}" class="btn btn-info">
+              <i class="bi bi-trophy-fill me-2"></i>Leaderboard
+            </a>
+          </li>
+
+          {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <span class="text-white me-3">
+              <span class="me-2" style="font-size: 1.2rem;">👋</span>{{ current_user.name if current_user.name else
+              current_user.email }}, ඔබව
+              සාදරයෙන් පිලිගන්නවා!
+            </span>
+          </li>
+          {% endif %}
+
+          <li class="nav-item">
+            <a href="{{ url_for('write_guide') }}" class="btn btn-info me-2">
+              <i class="bi bi-trophy-fill me-2"></i>ශ්‍රේණිගත කිරීම්
+            </a>
+          </li>
+
+          {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">
+              Logout
+            </a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a href="http://localhost:5000/login" class="btn btn-primary">
+              Login
+            </a>
+          </li>
+          {% endif %}
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  {% block content %} {% endblock content %}
+
+  <!-- jQuery first, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scroll/12.1.5/js/smooth-scroll.min.js"
+    integrity="sha256-MMt0/21G3z0Zg4ET1kI3HC9npItDowkitRDVr0FhCxA=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
+  {% block js %}{% endblock js %}
+</body>
+
+</html>

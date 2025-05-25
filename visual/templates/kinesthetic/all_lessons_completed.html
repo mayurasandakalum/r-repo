@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Let's Quiz | All Questions Completed{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="jumbotron text-center">
+        <h1 class="display-4">සුබයි! 🎉</h1>
+        <p class="lead">ඔබ සියලුම ප්‍රශ්න සාර්ථකව සම්පූර්ණ කර ඇත.</p>
+        <hr class="my-4">
+        <p>ඔබේ ප්‍රගතිය බැලීමට ප්‍රතිඵල පුවරුව පරීක්ෂා කරන්න.</p>
+        <p class="lead">ඔබ උපයාගත් මුළු ලකුණු:
+            {% if kinesthetic_profile %}
+            <strong>{{ kinesthetic_profile.total_score }}</strong>
+            {% else %}
+            <strong>0</strong>
+            {% endif %}
+        </p>
+        <a class="btn btn-primary btn-lg" href="{{ url_for('kinesthetic.leaderboard') }}" role="button">
+            ප්‍රතිඵල බලන්න
+        </a>
+    </div>
+</div>
+{% endblock %}

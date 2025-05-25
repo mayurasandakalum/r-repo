@@ -1,0 +1,21 @@
+VARK Analysis Summary Report
+==========================
+
+Total Students: 50
+
+Learning Style Distribution:
+A: 11 (22.0%)
+R: 10 (20.0%)
+K: 9 (18.0%)
+V: 8 (16.0%)
+Undefined: 4 (8.0%)
+RV: 3 (6.0%)
+AK: 2 (4.0%)
+KV: 2 (4.0%)
+AV: 1 (2.0%)
+
+Thresholds Used:
+V: 85.86
+A: 85.27
+R: 82.98
+K: 83.83

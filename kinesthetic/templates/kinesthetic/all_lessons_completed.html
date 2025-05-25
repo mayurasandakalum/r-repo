@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Let's Quiz | All Questions Completed{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="jumbotron text-center">
+        <h1 class="display-4">සුබයි! 🎉</h1>
+        <p class="lead">ඔබ සියලුම ප්‍රශ්න සාර්ථකව සම්පූර්ණ කර ඇත.</p>
+        <hr class="my-4">
+        <p>ඔබේ ප්‍රගතිය බැලීමට ප්‍රතිඵල පුවරුව පරීක්ෂා කරන්න.</p>
+        <p class="lead">ඔබ උපයාගත් මුළු ලකුණු:
+            {% if kinesthetic_profile %}
+            <strong>{{ kinesthetic_profile.total_score }}</strong>
+            {% else %}
+            <strong>0</strong>
+            {% endif %}
+        </p>
+
+        <div class="mt-5 button-group">
+            <a class="btn btn-primary btn-lg" href="{{ url_for('kinesthetic.leaderboard') }}" role="button">
+                <i class="fa fa-trophy"></i> ප්‍රතිඵල බලන්න
+            </a>
+            <a class="btn btn-outline-secondary btn-lg ml-2" href="http://localhost:5000/student_dashboard"
+                role="button">
+                <i class="fa fa-home"></i> ප්‍රධාන පුවරුවට ආපසු
+            </a>
+        </div>
+
+        {% if kinesthetic_profile and kinesthetic_profile.subject_counts %}
+        <div class="mt-5">
+            <h3>විෂය ප්‍රගතිය සාරාංශය</h3>
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-8">
+                    <div class="subject-progress">
+                        {% for subject, count in kinesthetic_profile.subject_counts.items() %}
+                        <div class="subject-item mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>
+                                    {% if subject == 'addition' %}එකතු කිරීම
+                                    {% elif subject == 'subtraction' %}අඩු කිරීම
+                                    {% elif subject == 'time' %}කාලය
+                                    {% else %}{{ subject }}
+                                    {% endif %}
+                                </span>
+                                <span>{{ count }} ප්‍රශ්න</span>
+                            </div>
+                            <div class="progress" style="height: 10px;">
+                                <div class="progress-bar 
+                                        {% if subject == 'addition' %}bg-success
+                                        {% elif subject == 'subtraction' %}bg-warning
+                                        {% elif subject == 'time' %}bg-info
+                                        {% else %}bg-primary
+                                        {% endif %}" style="width: {{ count / 15 * 100 }}%" role="progressbar"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

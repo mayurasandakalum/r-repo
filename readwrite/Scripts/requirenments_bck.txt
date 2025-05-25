@@ -1,0 +1,11 @@
+Flask
+firebase_admin
+torch
+torchaudio
+torchvision
+transformers
+sentence-transformers
+gTTS
+soundfile
+flask_session
+opencv-python

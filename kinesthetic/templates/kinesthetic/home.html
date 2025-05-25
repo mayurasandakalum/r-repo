@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %} Let's Quiz | Home {% endblock title %}
+{% block content %}
+<section id="section-jumbotron" class="jumbotron jumbotron-fluid d-flex justify-content-center align-items-center">
+  <div class="container text-center">
+    <h1 class="display-1 text-info">Let's Quiz</h1>
+    <p class="display-4 d-none d-sm-block">
+      Test your skills and become a master.
+    </p>
+    <p class="lead">We organize quizzes on various topics.</p>
+
+    {% if not current_user.is_authenticated %}
+    <p class="lead">
+      Please log in through the main system to access the kinesthetic learning modules.
+    </p>
+    <p><strong>Access Requires Authentication:</strong></p>
+    <a href="http://localhost:5000/login" class="btn btn-lg btn-info mt-1">
+      Login via Main System
+    </a>
+    {% else %}
+    <a href="{{ url_for('kinesthetic.user_home') }}" class="btn btn-lg btn-info mt-1">My Dashboard</a>
+    <a href="{{ url_for('kinesthetic.leaderboard') }}" class="btn btn-lg btn-info mt-1">Leaderboard</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock content %}
